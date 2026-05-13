@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickTrend - マップ</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #eef3f8; }
+        .page { max-width: 980px; margin: 0 auto; padding: 1.5rem; }
+        .panel { background: white; border-radius: 16px; padding: 1.4rem; box-shadow: 0 14px 35px rgba(28,48,89,.08); }
+        #mapFrame { width: 100%; min-height: 420px; border: 1px solid #d7dfe9; border-radius: 12px; margin-top: 1rem; }
+        button { margin-top: 1rem; padding: .9rem 1.3rem; border: none; border-radius: 8px; background: #2f71b2; color: white; cursor: pointer; }
+        nav a { margin-right: 1rem; color: #2f71b2; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="page panel">
+        <nav><a href="php/QuickTrend.php">戻る</a><a href="php/logout.php">ログアウト</a></nav>
+        <h1>マップ機能</h1>
+        <p>位置情報やスポットデータを読み込み、マップ表示を行います。</p>
+        <button id="refresh">スポット情報を更新</button>
+        <div id="mapFrame">ここにマップ情報が表示されます。</div>
+    </div>
+    <script src="js/Map.js"></script>
+</body>
+</html>

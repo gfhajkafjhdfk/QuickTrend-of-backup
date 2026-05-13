@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickTrend - AIマッチング</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #eef3f8; margin: 0; padding: 1.5rem; }
+        .page { max-width: 900px; margin: 0 auto; }
+        .panel { background: white; padding: 1.4rem; border-radius: 16px; box-shadow: 0 14px 35px rgba(28,48,89,.08); }
+        button { display: inline-block; margin-top: 1rem; padding: .9rem 1.3rem; border: none; border-radius: 8px; background: #2468c4; color: white; cursor: pointer; }
+        .result { margin-top: 1.2rem; }
+        .candidate { margin: .8rem 0; padding: .9rem; border-radius: 12px; background: #f7f9fd; }
+        nav a { margin-right: 1rem; color: #2468c4; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="page panel">
+        <nav><a href="php/QuickTrend.php">戻る</a><a href="php/logout.php">ログアウト</a></nav>
+        <h1>AIマッチング</h1>
+        <p>あなたの進捗と興味に合う候補をPython AIで判定します。</p>
+        <button id="runMatching">マッチングを実行する</button>
+        <div id="status" class="result"></div>
+        <div id="candidates"></div>
+    </div>
+    <script src="js/matchAI.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickTrend - 登録</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f8ff; margin: 0; padding: 2rem; }
+        .box { max-width: 420px; margin: 0 auto; background: white; padding: 1.8rem; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,.08); }
+        label { display: block; margin-top: 1rem; }
+        input, select { width: 100%; padding: .8rem; margin-top: .4rem; border: 1px solid #c5cbd3; border-radius: 6px; }
+        button { width: 100%; margin-top: 1.4rem; padding: .9rem; border: none; border-radius: 8px; background: #2f71b2; color: white; font-size: 1rem; }
+        a { display: inline-block; margin-top: 1rem; color: #2f71b2; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>新規登録</h1>
+        <form method="post" action="php/register.php">
+            <label>ニックネーム<input type="text" name="name" required></label>
+            <label>メールアドレス<input type="email" name="email" required></label>
+            <label>パスワード<input type="password" name="password" required></label>
+            <label>得意ジャンル<select name="genre" required>
+                <option value="music">音楽</option>
+                <option value="travel">旅行</option>
+                <option value="food">グルメ</option>
+                <option value="movie">映画</option>
+                <option value="sports">スポーツ</option>
+            </select></label>
+            <button type="submit">登録する</button>
+        </form>
+        <a href="sighin.html">すでにアカウントをお持ちの方はこちら</a>
+    </div>
+</body>
+</html>
