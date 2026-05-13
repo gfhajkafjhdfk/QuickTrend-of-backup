@@ -1,28 +1,111 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja"><!--phpを使ってログインしていないページの情報を自動的に確認し自動的にこのページに戻るコードの提案をChatgptにしてもらったからそれを参考に作る（最初の一行などにphp専用のコードを書く、index.phpなどの名前に変更）-->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuickTrend - ホーム</title>
+    <meta name="description" content="QuickTrend - 位置・気持ち・話題がつながる新感覚SNS">
+    <meta property="og:title" content="QuickTrend">
+    <meta property="og:description" content="Feelingの共有・まだ見ぬ発見を">
+    <title>QuickTrend</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" href="favicon.ico">
+    <script src="https://kit.fontawesome.com/12802bf766.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>QuickTrend</h1>
-        <p>PHP + JavaScript + Python + MySQL を組み合わせた AI マッチング Web アプリケーション</p>
-        <div class="buttons">
-            <a href="sighin.html">サインイン</a>
-            <a href="sighup.html" class="secondary">サインアップ</a>
-            <a href="php/QuickTrend.php" class="secondary">QuickTrend を開く</a>
-        </div>
-        <ul class="feature-list">
-            <li>AI マッチング機能</li>
-            <li>リアルタイムチャット</li>
-            <li>位置情報マップ</li>
-            <li>Next.js ベースの拡張 UI</li>
-        </ul>
-    </div>
-    <script src="js/main.js"></script>
+   <div id="loading-screen">
+       <h1>Quick<br>Trend</h1>
+   </div>
+
+<div id="termsPage" style="display: none;">    
+       
+     <div class="header-buttons">
+          <a href="sighin.html" class="in">ログイン</a>
+          <a href="sighup.html" class="up">新規会員登録</a>
+     </div>
+
+           <div class="page">
+              <h1 class="typing-text" id="animation">Quick Trend</h1>
+
+                    <img src="image.jpg" class="imageone">
+    
+                       <section class="header">
+                                 <div class="new">Neo-Social
+                                 </div>
+                                       <div class="text_wrap">
+                                          <p class="explain">QuickTrendへようこそ。<br>
+                                              Feelingの共有・まだ見ぬ発見を</p>
+                                       </div>
+                         </section>
+           </div>
+                    <div class="feature">
+  <p class="intro"><span class="diagonal">QuickTrend</span>の主な機能</p>
+
+  <div class="feature-item">
+    <h3><span>ここがすごい！</span> 機能1</h3>
+    <p class="feature-text">
+      地図上の気になる場所などの、<span class="highlight">訪問人数のグラフ</span>が見える！<br>
+      今どこが人気なのかが<span class="highlight">一目でわかる</span>から、次に行く場所を決めるヒントにもなるかも？
+    </p>
+  </div>
+
+  <div class="feature-item">
+    <h3>機能2</h3>
+    <p class="feature-text">
+      定期的に出されるカンタンなアンケートに答えるだけで、<br><span class="highlight">みんなの気持ちも見える</span>！<br>
+      気軽に参加できるから、<br><span class="highlight">「ちょっと不安…」な人でも<br>大丈夫</span>！
+    </p>
+  </div>
+
+  <div class="feature-item">
+    <h3>機能3</h3>
+    <p class="feature-text">
+      興味のある分野を<span class="highlight">12種類</span>の中から選べて、同じテーマが好きな人とチャットできる！<br>
+      ゆるっと雑談もOK、地域のアイデアを語り合うのもOK。<br>
+      新しい出会いや、面白い話がきっと待ってる！
+    </p>
+  </div>
+</div>
+
+                 <div class="instagram">
+                     <img src="instagram.jpg" alt="Button Image" class="instagram-image">
+                             <a href="https://www.instagram.com/quicktrend_official/?igsh=MXB1a2Z3bDJtdWRmNQ%3D%3D">公式アカウントはこちら</a>
+                     </div>
+
+
+                    
+</div>
+   
+
+    
+
+<script>
+    //ここのjavascriptは改善しなくてもよし
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        document.getElementById('loading-screen').style.display = 'none';
+        document.getElementById('termsPage').style.display = 'block';
+      }, 3000);
+    });
+
+// フェードイン関係
+    const featureItems = document.querySelectorAll('.feature-item');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('fade-in');
+      }
+    });
+  }, {
+    threshold: 0.1
+  });
+
+  featureItems.forEach(item => {
+    observer.observe(item);
+  });
+    
+    
+</script>
+
 </body>
 </html>
