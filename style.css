@@ -16,7 +16,11 @@ html {
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #222;
-  background: linear-gradient(135deg, #0d1b3a 0%, #1a3a52 50%, #0f2744 100%);
+  background-image: url('images/backimage.jpg');
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   min-height: 100vh;
 }
 
@@ -232,8 +236,21 @@ nav a:hover {
 
 /* -------- ホームページ用 -------- */
 body.home-page {
-  background: linear-gradient(135deg, #0d1b3a 0%, #1a3a52 50%, #0f2744 100%);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+body.home-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('images/backimage.jpg');
   background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
 }
 
 body.home-page .container {
@@ -262,10 +279,29 @@ body.auth-page {
   align-items: center;
   justify-content: center;
   padding: 2rem;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+body.auth-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('images/backimage.jpg');
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
 }
 
 body.auth-page .box {
   width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
 }
 
 body.auth-page .box h1 {
@@ -527,7 +563,12 @@ body.auth-page a {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #0d1b3a 0%, #1a3a52 50%, #0f2744 100%);
+  background-image: url('images/backimage.jpg');
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(13, 27, 58, 0.7);
+  background-blend-mode: overlay;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -599,7 +640,7 @@ body.auth-page a {
 
 /* -------- ヒーロー セクション -------- */
 .hero {
-  background: linear-gradient(135deg, #0d1b3a 0%, #1a3a52 50%, #0f2744 100%);
+  background: rgba(0, 0, 0, 0.3);
   padding: 4rem 0;
   position: relative;
   overflow: hidden;
@@ -786,7 +827,8 @@ body.auth-page a {
 /* -------- SNS セクション -------- */
 .social-section {
   padding: 5rem 0;
-  background: linear-gradient(135deg, #f8fafc 0%, #e8f1fb 100%);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
 }
 
 .social-content {
@@ -818,7 +860,7 @@ body.auth-page a {
 /* -------- CTA セクション -------- */
 .cta-section {
   padding: 5rem 0;
-  background: linear-gradient(135deg, #1d4e89 0%, #2f71b2 100%);
+  background: linear-gradient(135deg, rgba(29, 78, 137, 0.8) 0%, rgba(47, 113, 178, 0.8) 100%);
 }
 
 .cta-box {
