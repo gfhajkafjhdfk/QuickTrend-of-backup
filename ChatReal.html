@@ -6,40 +6,240 @@
     <title>QuickTrend - チャット</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <!-- FontAwesome -->
+    <script src="https://kit.fontawesome.com/12802bf766.js" crossorigin="anonymous"></script>
 </head>
-<body>
-    <div class="panel">
-        <nav><a href="php/QuickTrend.php">戻る</a><a href="php/logout.php">ログアウト</a></nav>
-        <h1>チャットルーム</h1>
-        <div id="messages">メッセージを読み込み中...</div>
-        <form id="chatForm" class="chat-form">
-            <input type="text" id="message" placeholder="メッセージを入力" autocomplete="off" required>
-            <button type="submit">送信</button>
-        </form>
+
+<body class="toback">
+
+    <!-- 上部コントロールバー -->
+    <div id="controlebar">
+        <a href="php/QuickTrend.php" class="toppage">トップページに戻る</a>
+        <a href="php/logout.php" class="backpage">ログアウト</a>
+        <h2>ジャンル一覧</h2>
     </div>
+
+    <!-- ジャンル一覧 -->
+    <div id="genreListPage">
+        <ul id="genreList">
+
+            <li>
+                <button class="genreButton" data-genre="クリエイトバザール">
+                    <i class="fa-solid fa-comments-dollar" style="color: #b8fb3c;"></i>
+                    <span>クリエイトバザール</span>
+                </button>
+            </li>
+
+            <li>
+                <button class="genreButton" data-genre="つながリンク">
+                    <i class="fa-solid fa-comments" style="color: #4fe38f;"></i>
+                    <span>つながリンク</span>
+                </button>
+            </li>
+
+            <li>
+                <button class="genreButton" data-genre="トレンドスポット">
+                    <i class="fa-solid fa-people-group" style="color: #15e523;"></i>
+                    <span>トレンドスポット</span>
+                </button>
+            </li>
+
+            <li>
+                <button class="genreButton" data-genre="わくわくワークショップ">
+                    <i class="fa-solid fa-place-of-worship" style="color: #29c2e0;"></i>
+                    <span>わくわくワークショップ</span>
+                </button>
+            </li>
+
+            <li>
+                <button class="genreButton" data-genre="ハッピーリビング">
+                    <i class="fa-solid fa-people-roof" style="color: #9ad5a4;"></i>
+                    <span>ハッピーリビング</span>
+                </button>
+            </li>
+
+            <li>
+                <button class="genreButton" data-genre="政治経済">
+                    <i class="fa-solid fa-landmark-dome" style="color: #FFD43B;"></i>
+                    <span>政治経済</span>
+                </button>
+            </li>
+
+        </ul>
+    </div>
+
+    <!-- チャット画面 -->
+    <div id="chatPage" style="display:none;">
+        <div class="container">
+
+            <button id="backButton">前のページに戻る</button>
+
+            <h3 id="chatTitle">チャットルーム</h3>
+
+            <!-- メッセージ表示 -->
+            <div id="messages" class="post-history">
+                メッセージを読み込み中...
+            </div>
+
+            <!-- チャットフォーム -->
+            <form id="chatForm" class="chat-form">
+
+                <div class="form-group">
+                    <label for="message">メッセージ</label>
+                    <input 
+                        type="text" 
+                        id="message" 
+                        class="input-field"
+                        placeholder="メッセージを入力"
+                        autocomplete="off"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="submit-button">
+                    送信
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
     <script>
-        async function loadMessages() {
-            const response = await fetch('php/chat_get.php');
-            const data = await response.json();
-            const container = document.getElementById('messages');
-            container.innerHTML = data.messages.map(msg =>
-                `<div class="message"><strong>${msg.user_name}</strong><span>${msg.message}</span><small>${msg.created_at}</small></div>`
-            ).join('');
-        }
-        document.getElementById('chatForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const message = document.getElementById('message').value.trim();
-            if (!message) return;
-            await fetch('php/chat_post.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ message })
+
+        let currentGenre = "";
+
+        // ジャンル選択
+        document.querySelectorAll('.genreButton').forEach(button => {
+
+            button.addEventListener('click', function() {
+
+                currentGenre = this.dataset.genre;
+
+                document.getElementById('chatTitle').textContent =
+                    currentGenre + " のチャット";
+
+                document.getElementById('genreListPage').style.display = 'none';
+                document.getElementById('controlebar').style.display = 'none';
+
+                document.getElementById('chatPage').style.display = 'block';
+
+                loadMessages();
             });
-            document.getElementById('message').value = '';
-            await loadMessages();
+
         });
-        loadMessages();
-        setInterval(loadMessages, 5000);
+
+        // 戻るボタン
+        document.getElementById('backButton').addEventListener('click', function() {
+
+            document.getElementById('chatPage').style.display = 'none';
+
+            document.getElementById('genreListPage').style.display = 'flex';
+
+            document.getElementById('controlebar').style.display = 'block';
+
+        });
+
+        // メッセージ読み込み
+        async function loadMessages() {
+
+            try {
+
+                const response = await fetch(
+                    'php/chat_get.php?genre=' + encodeURIComponent(currentGenre)
+                );
+
+                const data = await response.json();
+
+                const container = document.getElementById('messages');
+
+                if (!data.messages || data.messages.length === 0) {
+
+                    container.innerHTML =
+                        '<p style="text-align:center;">まだメッセージはありません</p>';
+
+                    return;
+                }
+
+                container.innerHTML = data.messages.map(msg => `
+
+                    <div id="postList">
+                        <li>
+                            <strong>${msg.user_name}</strong>
+                            <span>${msg.message}</span><br>
+                            <small>${msg.created_at}</small>
+                        </li>
+                    </div>
+
+                `).join('');
+
+            } catch(error) {
+
+                document.getElementById('messages').innerHTML =
+                    'メッセージの取得に失敗しました';
+
+                console.error(error);
+
+            }
+
+        }
+
+        // 投稿処理
+        document.getElementById('chatForm').addEventListener(
+            'submit',
+            async function(event) {
+
+                event.preventDefault();
+
+                const message =
+                    document.getElementById('message').value.trim();
+
+                if (!message) return;
+
+                try {
+
+                    await fetch('php/chat_post.php', {
+
+                        method: 'POST',
+
+                        headers: {
+                            'Content-Type':
+                            'application/x-www-form-urlencoded'
+                        },
+
+                        body: new URLSearchParams({
+                            message: message,
+                            genre: currentGenre
+                        })
+
+                    });
+
+                    document.getElementById('message').value = '';
+
+                    await loadMessages();
+
+                } catch(error) {
+
+                    console.error(error);
+
+                }
+
+            }
+        );
+
+        // 5秒ごと更新
+        setInterval(() => {
+
+            if (
+                document.getElementById('chatPage').style.display === 'block'
+            ) {
+                loadMessages();
+            }
+
+        }, 5000);
+
     </script>
+
 </body>
 </html>
