@@ -344,6 +344,100 @@ body.auth-page a {
   }
 }
 
+/* -------- パネル & チャット -------- */
+.panel {
+  max-width: 960px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  padding: 1.4rem;
+  box-shadow: 0 15px 36px rgba(23, 51, 102, 0.08);
+}
+
+#messages {
+  min-height: 320px;
+  padding: 1rem;
+  border: 1px solid #dfe6f0;
+  border-radius: 12px;
+  background: #fbfcff;
+  overflow-y: auto;
+}
+
+.message {
+  margin-bottom: 0.9rem;
+}
+
+.message strong {
+  color: #26457f;
+}
+
+.message span {
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.chat-form {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.8rem;
+}
+
+.chat-form input {
+  flex: 1;
+  padding: 0.9rem;
+  border: 1px solid #c8d2e0;
+  border-radius: 10px;
+}
+
+.chat-form button {
+  padding: 0.9rem 1.3rem;
+  background: #2f71b2;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* -------- AIマッチング -------- */
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.result {
+  margin-top: 1.2rem;
+}
+
+.candidate {
+  margin: 0.8rem 0;
+  padding: 0.9rem;
+  border-radius: 12px;
+  background: #f7f9fd;
+}
+
+/* -------- マップ -------- */
+#map {
+  width: 100vw;
+  height: 100vh;
+}
+
+.info-banner {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 10;
+  pointer-events: none;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
 /* -------- ユーティリティクラス -------- */
 .text-center {
   text-align: center;
