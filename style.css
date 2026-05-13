@@ -16,12 +16,137 @@ html {
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #222;
-  background-image: url('images/backimage.jpg');
+  background-image: url('image/backimage.jpg');
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   min-height: 100vh;
+}
+
+/* -------- ジャンル一覧専用スタイル -------- */
+#controlebar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+#controlebar h2 {
+  flex: 1 1 100%;
+  text-align: center;
+  margin: 0;
+  color: #1d4e89;
+}
+
+#genreListPage {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem 3rem;
+}
+
+#genreList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  max-width: 1200px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#genreList li {
+  margin: 0;
+}
+
+.genreButton {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 1.2rem 1.4rem;
+  background: linear-gradient(135deg, #2f71b2, #1d4e89);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 14px 25px rgba(0, 0, 0, 0.12);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  text-align: left;
+}
+
+.genreButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.18);
+  background: linear-gradient(135deg, #1f5da1, #163e6d);
+}
+
+.genreButton i {
+  font-size: 2rem;
+  min-width: 44px;
+}
+
+.genreButton span {
+  flex: 1;
+}
+
+.chat-form {
+  display: grid;
+  gap: 1rem;
+}
+
+#messages {
+  min-height: 320px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+#messages p {
+  margin: 0;
+  color: #444;
+}
+
+#backButton {
+  width: auto;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1.5rem;
+  background: linear-gradient(135deg, #5d728f, #3f4f64);
+  color: white;
+}
+
+#backButton:hover {
+  transform: translateY(-1px);
+}
+
+.post-history {
+  margin-top: 1.5rem;
+}
+
+#messages li {
+  list-style: none;
+}
+
+#messages li strong {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.86);
 }
 
 /* -------- コンテナ & レイアウト -------- */
