@@ -76,14 +76,13 @@ body {
   justify-content: flex-start;
   width: 100%;
   padding: 1.2rem 1.4rem;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #081b33;
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 22px;
-  background: linear-gradient(145deg, rgba(255,255,255,0.42), rgba(192, 218, 255, 0.18));
-  background-blend-mode: screen;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18), 0 20px 40px rgba(13, 35, 65, 0.16);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: linear-gradient(145deg, rgba(17, 64, 107, 0.96), rgba(20, 75, 118, 0.85));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 22px 42px rgba(0, 20, 50, 0.26);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -96,28 +95,28 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at top left, rgba(255,255,255,0.45), transparent 28%),
-              radial-gradient(circle at bottom right, rgba(173, 216, 255, 0.28), transparent 30%);
-  opacity: 0.85;
+  background: radial-gradient(circle at top left, rgba(255,255,255,0.16), transparent 24%),
+              radial-gradient(circle at bottom right, rgba(173, 216, 255, 0.12), transparent 26%);
+  opacity: 0.9;
   pointer-events: none;
-  transform: translate(-15%, -15%);
+  transform: translate(-10%, -10%);
 }
 
 .genreButton:hover {
   transform: translateY(-3px);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25), 0 24px 45px rgba(12, 30, 60, 0.24);
-  background: linear-gradient(145deg, rgba(255,255,255,0.62), rgba(172, 209, 255, 0.24));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), 0 26px 50px rgba(0, 18, 44, 0.32);
+  background: linear-gradient(145deg, rgba(36, 105, 159, 0.98), rgba(21, 83, 131, 0.9));
 }
 
 .genreButton:active {
   transform: translateY(0);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22), 0 12px 24px rgba(12, 30, 60, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), 0 12px 24px rgba(0, 18, 44, 0.22);
 }
 
 .genreButton i {
   font-size: 2rem;
   min-width: 44px;
-  color: #eef7ff;
+  color: #cbe5ff;
 }
 
 .genreButton span {
