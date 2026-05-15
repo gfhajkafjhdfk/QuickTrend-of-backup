@@ -164,10 +164,16 @@ body {
 }
 
 .panel-toggle-button {
-  padding: 0.85rem 1rem;
+  position: absolute;
+  top: 1.2rem;
+  left: 1.2rem;
+  padding: 0.4rem 0.6rem;
   background: linear-gradient(135deg, #2f71b2, #1d4e89);
   color: white;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1.2rem;
+  min-width: auto;
+  z-index: 10;
 }
 
 .panel-toggle-button:hover,
@@ -186,24 +192,25 @@ body {
   display: flex;
   align-items: flex-end;
   gap: 0.75rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  justify-content: space-between;
 }
 
 .chat-input-group {
-  flex: 1 1 100%;
+  flex: 6;
   min-width: 0;
 }
 
 .attach-button {
-  width: 3.4rem;
-  min-width: 3.4rem;
-  height: 3.4rem;
+  flex: 2;
+  width: auto;
+  padding: 0.9rem;
   background: rgba(47, 113, 178, 0.12);
   color: #1d4e89;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .attach-button i {
@@ -212,8 +219,8 @@ body {
 
 .chat-textarea {
   width: 100%;
-  min-height: 180px;
-  max-height: 320px;
+  min-height: 140px;
+  max-height: 240px;
   resize: vertical;
   padding: 1rem;
 }
@@ -223,20 +230,21 @@ body {
 }
 
 .submit-button {
-  padding: 0.9rem 1.15rem;
-  min-width: 110px;
+  flex: 2;
+  padding: 0.75rem 0.5rem;
   background: linear-gradient(135deg, #29c2e0, #1579d6);
   color: white;
   font-weight: 700;
+  font-size: 0.95rem;
 }
 
 #chatPage.expanded-input #messages {
-  min-height: 220px;
-  max-height: 34vh;
+  min-height: 60px;
+  max-height: 15vh;
 }
 
 #chatPage.expanded-input .chat-textarea {
-  min-height: 260px;
+  min-height: 380px;
 }
 
 #chatPage.expanded-input .chat-compose-row {
@@ -261,6 +269,11 @@ body {
 
 .post-history {
   margin-top: 1.5rem;
+  position: relative;
+}
+
+.form-group label {
+  display: none;
 }
 
 #messages li {
