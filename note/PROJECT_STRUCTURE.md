@@ -1,6 +1,6 @@
 # QuickTrend - プロジェクト構造整理ガイド
 
-## 📋 実装完了内容
+##  実装完了内容
 
 このプロジェクトは、参考のGitHubページ（https://gfhajkafjhdfk.github.io/ChatReal/）のデザインと構造に合わせて整理されました。
 
