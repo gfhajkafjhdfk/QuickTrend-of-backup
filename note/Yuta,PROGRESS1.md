@@ -203,7 +203,7 @@ main (安定版)
 
 ## 📝 関連ドキュメント
 
-- [システム設計図](PROJECT_STRUCTURE.md)[](system.blueprint/system1.png)[](system.blueprint/system2.png)[](system.blueprint/system3.png)[](system.blueprint/system4.png)[](system.blueprint/system5.png)
+- [システム設計図](ROJECT_STRUCTURE.md)[](../system.blueprint/system1.png)[](../system.blueprint/system2.png)[](../system.blueprint/system3.png)[](../system.blueprint/system4.png)[](../system.blueprint/system5.png)
 - [データベース定義](../database.sql)
 - [README](../README.md)
 - [要件一覧](requirements.txt)
