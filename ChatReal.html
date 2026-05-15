@@ -121,9 +121,13 @@
     <div id="chatPage" style="display:none;">
         <div class="container">
 
-            <button id="backButton">前のページに戻る</button>
-
-            <h3 id="chatTitle">チャットルーム</h3>
+            <div class="chat-header-row">
+                <button id="backButton">前のページに戻る</button>
+                <h3 id="chatTitle">チャットルーム</h3>
+                <button id="panelToggle" class="panel-toggle-button" type="button">
+                    ログ縮小 / 入力拡大
+                </button>
+            </div>
 
             <!-- メッセージ表示 -->
             <div id="messages" class="post-history">
@@ -133,21 +137,25 @@
             <!-- チャットフォーム -->
             <form id="chatForm" class="chat-form">
 
-                <div class="form-group">
-                    <label for="message">メッセージ</label>
-                    <input 
-                        type="text" 
-                        id="message" 
-                        class="input-field"
-                        placeholder="メッセージを入力"
-                        autocomplete="off"
-                        required
-                    >
+                <div class="chat-compose-row">
+                    <button id="attachButton" type="button" class="attach-button" title="画像やファイルを添付">
+                        <i class="fa-solid fa-paperclip"></i>
+                    </button>
+                    <input type="file" id="fileInput" class="file-input" hidden multiple>
+                    <div class="form-group chat-input-group">
+                        <label for="message">メッセージ</label>
+                        <textarea
+                            id="message"
+                            class="input-field chat-textarea"
+                            placeholder="メッセージを入力"
+                            autocomplete="off"
+                            required
+                        ></textarea>
+                    </div>
+                    <button type="submit" class="submit-button">
+                        送信
+                    </button>
                 </div>
-
-                <button type="submit" class="submit-button">
-                    送信
-                </button>
 
             </form>
 
@@ -275,6 +283,25 @@
 
             }
         );
+
+        // 送信に向けた添付ボタン
+        document.getElementById('attachButton').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            if (event.target.files.length > 0) {
+                const fileName = event.target.files[0].name;
+                alert('添付ファイル: ' + fileName);
+            }
+        });
+
+        // 入力拡大 / ログ縮小トグル
+        document.getElementById('panelToggle').addEventListener('click', function() {
+            const chatPage = document.getElementById('chatPage');
+            const expanded = chatPage.classList.toggle('expanded-input');
+            this.textContent = expanded ? 'ログ拡大 / 入力縮小' : 'ログ縮小 / 入力拡大';
+        });
 
         // 5秒ごと更新
         setInterval(() => {
