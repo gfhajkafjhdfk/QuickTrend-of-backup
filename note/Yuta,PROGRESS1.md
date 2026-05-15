@@ -203,10 +203,10 @@ main (安定版)
 
 ## 📝 関連ドキュメント
 
-- [システム設計図](note/PROJECT_STRUCTURE.md)
-- [データベース定義](database.sql)
-- [README](README.md)
-- [要件一覧](note/requirements.txt)
+- [システム設計図](PROJECT_STRUCTURE.md)(blueprint/system1.png)(blueprint/system2.png)(blueprint/system3.png)(blueprint/system4.png)(system5.png)
+- [データベース定義](../database.sql)
+- [README](../README.md)
+- [要件一覧](requirements.txt)
 
 ---
 
