@@ -129,14 +129,11 @@ body {
 }
 
 #messages {
-  min-height: 420px;
-  max-height: 70vh;
-  overflow-y: auto;
+  min-height: 320px;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  transition: min-height 0.35s ease, max-height 0.35s ease, padding 0.35s ease;
 }
 
 #messages p {
@@ -264,7 +261,7 @@ body {
 
 #backButton {
   width: auto;
-  margin-bottom: 0;
+  margin-bottom: 1rem;
   padding: 0.85rem 1.5rem;
   background: linear-gradient(135deg, #5d728f, #3f4f64);
   color: white;
@@ -276,11 +273,6 @@ body {
 
 .post-history {
   margin-top: 1.5rem;
-  position: relative;
-}
-
-.form-group label {
-  display: none;
 }
 
 #messages li {

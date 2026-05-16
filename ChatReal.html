@@ -121,10 +121,9 @@
     <div id="chatPage" style="display:none;">
         <div class="container">
 
-            <div class="chat-header-row">
-                <button id="backButton">前のページに戻る</button>
-                <h3 id="chatTitle">チャットルーム</h3>
-            </div>
+            <button id="backButton">前のページに戻る</button>
+
+            <h3 id="chatTitle">チャットルーム</h3>
 
             <!-- メッセージ表示 -->
             <div id="messages" class="post-history">
@@ -135,25 +134,21 @@
             <!-- チャットフォーム -->
             <form id="chatForm" class="chat-form">
 
-                <div class="chat-compose-row">
-                    <button id="attachButton" type="button" class="attach-button" title="画像やファイルを添付">
-                        <i class="fa-solid fa-paperclip"></i>
-                    </button>
-                    <input type="file" id="fileInput" class="file-input" hidden multiple>
-                    <div class="form-group chat-input-group">
-                        <label for="message">メッセージ</label>
-                        <textarea
-                            id="message"
-                            class="input-field chat-textarea"
-                            placeholder="メッセージを入力"
-                            autocomplete="off"
-                            required
-                        ></textarea>
-                    </div>
-                    <button type="submit" class="submit-button">
-                        送信
-                    </button>
+                <div class="form-group">
+                    <label for="message">メッセージ</label>
+                    <input 
+                        type="text" 
+                        id="message" 
+                        class="input-field"
+                        placeholder="メッセージを入力"
+                        autocomplete="off"
+                        required
+                    >
                 </div>
+
+                <button type="submit" class="submit-button">
+                    送信
+                </button>
 
             </form>
 
