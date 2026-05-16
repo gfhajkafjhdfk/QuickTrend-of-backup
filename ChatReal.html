@@ -128,7 +128,7 @@
 
             <!-- メッセージ表示 -->
             <div id="messages" class="post-history">
-                <button id="panelToggle" class="panel-toggle-button" type="button" title="ログを展開/縮小">−</button>
+                <button id="panelToggle" class="panel-toggle-button" type="button" title="ログを展開/縮小">＋</button>
                 メッセージを読み込み中...
             </div>
 
@@ -300,7 +300,7 @@
             e.stopPropagation();
             const chatPage = document.getElementById('chatPage');
             const expanded = chatPage.classList.toggle('expanded-input');
-            this.textContent = expanded ? '＋' : '−';
+            this.textContent = expanded ? '−' : '＋';
         });
 
         // 5秒ごと更新
