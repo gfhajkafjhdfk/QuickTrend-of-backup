@@ -73,19 +73,6 @@ p {
   margin-bottom: 1rem;
 }
 
-
-topbutton {
-  color: #2f71b2;
-  text-decoration: none;
-  transition: color 0.3s ease;
-  display: flex;
-  justify-content: flex-start;
-}
-
-topbutton:hover {
-  color: #1d4e89;
-}
-
 /* -------- フォーム要素 -------- */
 label {
   display: block;
@@ -109,6 +96,17 @@ textarea {
     box-shadow 0.3s ease;
 }
 
+topbutton {
+  color: #2f71b2;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  display: flex;
+  justify-content: flex-start;
+}
+
+topbutton:hover {
+  color: #1d4e89;
+}
 input:focus,
 select:focus,
 textarea:focus {
