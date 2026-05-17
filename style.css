@@ -96,7 +96,7 @@ textarea {
     box-shadow 0.3s ease;
 }
 
-topbutton {
+/* topbutton {
   color: #2f71b2;
   text-decoration: none;
   transition: color 0.3s ease;
@@ -106,7 +106,7 @@ topbutton {
 
 topbutton:hover {
   color: #1d4e89;
-}
+} */
 input:focus,
 select:focus,
 textarea:focus {
