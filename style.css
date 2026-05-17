@@ -392,15 +392,17 @@ p {
   margin-bottom: 1rem;
 }
 
-a {
+
+topbutton {
   color: #2f71b2;
   text-decoration: none;
   transition: color 0.3s ease;
+  display: flex;
+  justify-content: flex-start;
 }
 
-a:hover {
+topbutton:hover {
   color: #1d4e89;
-  text-decoration: underline;
 }
 
 /* -------- フォーム要素 -------- */
