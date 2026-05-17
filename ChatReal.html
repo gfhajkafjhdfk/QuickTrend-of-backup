@@ -1,217 +1,257 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>QuickTrend - チャット</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
     <!-- FontAwesome -->
-    <script src="https://kit.fontawesome.com/12802bf766.js" crossorigin="anonymous"></script>
-</head>
+    <script
+      src="https://kit.fontawesome.com/12802bf766.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
 
-<body class="toback">
-
+  <body class="toback">
     <!-- 上部コントロールバー -->
     <div id="controlebar">
-        <a href="php/QuickTrend.php" class="toppage">トップページに戻る</a>
-        <a href="php/logout.php" class="backpage">ログアウト</a>
-        <h2>ジャンル一覧</h2>
+      <a href="php/QuickTrend.php" class="toppage">トップページに戻る</a>
+      <a href="php/logout.php" class="backpage">ログアウト</a>
+      <h2>ジャンル一覧</h2>
+      <div class="ticker-wrap">
+        <div class="ticker">
+          QuickTrendへようこそ！ あなたのアイデアを共有しよう！
+        </div>
+      </div>
     </div>
 
     <!-- ジャンル一覧 -->
     <div id="genreListPage">
-        <ul id="genreList">
+      <ul id="genreList">
+        <li>
+          <button class="genreButton" data-genre="クリエイトバザール">
+            <i class="fa-solid fa-comments-dollar" style="color: #b8fb3c"></i>
+            <span>クリエイトバザール</span>
+          </button>
+        </li>
 
-            <li>
-                <button class="genreButton" data-genre="クリエイトバザール">
-                    <i class="fa-solid fa-comments-dollar" style="color: #b8fb3c;"></i>
-                    <span>クリエイトバザール</span>
-                </button>
-            </li>
+        <li>
+          <button class="genreButton" data-genre="つながリンク">
+            <i class="fa-solid fa-comments" style="color: #4fe38f"></i>
+            <span>つながリンク</span>
+          </button>
+        </li>
 
-            <li>
-                <button class="genreButton" data-genre="つながリンク">
-                    <i class="fa-solid fa-comments" style="color: #4fe38f;"></i>
-                    <span>つながリンク</span>
-                </button>
-            </li>
+        <li>
+          <button class="genreButton" data-genre="トレンドスポット">
+            <i class="fa-solid fa-people-group" style="color: #15e523"></i>
+            <span>トレンドスポット</span>
+          </button>
+        </li>
 
-            <li>
-                <button class="genreButton" data-genre="トレンドスポット">
-                    <i class="fa-solid fa-people-group" style="color: #15e523;"></i>
-                    <span>トレンドスポット</span>
-                </button>
-            </li>
+        <li>
+          <button class="genreButton" data-genre="わくわくワークショップ">
+            <i class="fa-solid fa-place-of-worship" style="color: #29c2e0"></i>
+            <span>わくわくワークショップ</span>
+          </button>
+        </li>
 
-            <li>
-                <button class="genreButton" data-genre="わくわくワークショップ">
-                    <i class="fa-solid fa-place-of-worship" style="color: #29c2e0;"></i>
-                    <span>わくわくワークショップ</span>
-                </button>
-            </li>
+        <li>
+          <button class="genreButton" data-genre="ハッピーリビング">
+            <i class="fa-solid fa-people-roof" style="color: #9ad5a4"></i>
+            <span>ハッピーリビング</span>
+          </button>
+        </li>
 
-            <li>
-                <button class="genreButton" data-genre="ハッピーリビング">
-                    <i class="fa-solid fa-people-roof" style="color: #9ad5a4;"></i>
-                    <span>ハッピーリビング</span>
-                </button>
-            </li>
+        <li>
+          <button class="genreButton" data-genre="政治経済">
+            <i class="fa-solid fa-landmark-dome" style="color: #ffd43b"></i>
+            <span>政治経済</span>
+          </button>
+        </li>
 
-            <li>
-                <button class="genreButton" data-genre="政治経済">
-                    <i class="fa-solid fa-landmark-dome" style="color: #FFD43B;"></i>
-                    <span>政治経済</span>
-                </button>
-            </li>
+        <li>
+          <button
+            class="genreButton"
+            data-genre="くらしのバリア"
+            data-tooltip="我々の住む町を住みやすくするにはどうしたらよいのか考えてみませんか？"
+          >
+            <i
+              class="fa-solid fa-helmet-safety"
+              style="color: #2cce47; font-size: 56px"
+            ></i>
+            <span>くらしのバリア</span>
+          </button>
+        </li>
 
-            <li>
-                <button class="genreButton" data-genre="くらしのバリア"
-                    data-tooltip="我々の住む町を住みやすくするにはどうしたらよいのか考えてみませんか？">
-                    <i class="fa-solid fa-helmet-safety" style="color: #2cce47; font-size: 56px;"></i>
-                    <span>くらしのバリア</span>
-                </button>
-            </li>
+        <li>
+          <button
+            class="genreButton"
+            data-genre="LOVESPACE"
+            data-tooltip="町の人同士で今よりも愛で満ちた暮らしにしませんか？"
+          >
+            <i
+              class="fa-solid fa-face-grin-hearts"
+              style="color: #fbff14; font-size: 56px"
+            ></i>
+            <span>LOVESPACE</span>
+          </button>
+        </li>
 
-            <li>
-                <button class="genreButton" data-genre="LOVESPACE"
-                    data-tooltip="町の人同士で今よりも愛で満ちた暮らしにしませんか？">
-                    <i class="fa-solid fa-face-grin-hearts" style="color: #fbff14; font-size: 56px;"></i>
-                    <span>LOVESPACE</span>
-                </button>
-            </li>
+        <li>
+          <button
+            class="genreButton"
+            data-genre="チャレンジステップ"
+            data-tooltip="町の人々とともに冒険をしてみませんか？"
+          >
+            <i
+              class="fa-brands fa-space-awesome"
+              style="color: #09d3cf; font-size: 56px"
+            ></i>
+            <span>チャレンジステップ</span>
+          </button>
+        </li>
 
-            <li>
-                <button class="genreButton" data-genre="チャレンジステップ"
-                    data-tooltip="町の人々とともに冒険をしてみませんか？">
-                    <i class="fa-brands fa-space-awesome" style="color: #09d3cf; font-size: 56px;"></i>
-                    <span>チャレンジステップ</span>
-                </button>
-            </li>
+        <li>
+          <button
+            class="genreButton"
+            data-genre="CREATION"
+            data-tooltip="町の人々とともに創造的なアイディアを出し合いましょう！"
+          >
+            <i
+              class="fa-regular fa-lightbulb"
+              style="color: #e9e216; font-size: 56px"
+            ></i>
+            <span>CREATION</span>
+          </button>
+        </li>
 
-            <li>
-                <button class="genreButton" data-genre="CREATION"
-                    data-tooltip="町の人々とともに創造的なアイディアを出し合いましょう！">
-                    <i class="fa-regular fa-lightbulb" style="color: #e9e216; font-size: 56px;"></i>
-                    <span>CREATION</span>
-                </button>
-            </li>
+        <li>
+          <button
+            class="genreButton"
+            data-genre="リラックススペース"
+            data-tooltip="日々の疲れを癒せるようなアイディアを出し合いましょう！"
+          >
+            <i
+              class="fa-solid fa-couch"
+              style="color: #f38e1b; font-size: 56px"
+            ></i>
+            <span>リラックススペース</span>
+          </button>
+        </li>
 
-            <li>
-                <button class="genreButton" data-genre="リラックススペース"
-                    data-tooltip="日々の疲れを癒せるようなアイディアを出し合いましょう！">
-                    <i class="fa-solid fa-couch" style="color: #f38e1b; font-size: 56px;"></i>
-                    <span>リラックススペース</span>
-                </button>
-            </li>
-
-            <li>
-                <button class="genreButton" data-genre="ミライソダテル"
-                    data-tooltip="子供たちのためになるアイディアを出し合いましょう！">
-                    <i class="fa-solid fa-seedling" style="color: #21e441; font-size: 56px;"></i>
-                    <span>ミライソダテル</span>
-                </button>
-            </li>
-
-        </ul>
+        <li>
+          <button
+            class="genreButton"
+            data-genre="ミライソダテル"
+            data-tooltip="子供たちのためになるアイディアを出し合いましょう！"
+          >
+            <i
+              class="fa-solid fa-seedling"
+              style="color: #21e441; font-size: 56px"
+            ></i>
+            <span>ミライソダテル</span>
+          </button>
+        </li>
+      </ul>
     </div>
 
     <!-- チャット画面 -->
-    <div id="chatPage" style="display:none;">
-        <div class="container">
+    <div id="chatPage" style="display: none">
+      <div class="container">
+        <button id="backButton">前のページに戻る</button>
 
-            <button id="backButton">前のページに戻る</button>
+        <h3 id="chatTitle">チャットルーム</h3>
 
-            <h3 id="chatTitle">チャットルーム</h3>
-
-            <!-- メッセージ表示 -->
-            <div id="messages" class="post-history">
-                <button id="panelToggle" class="panel-toggle-button" type="button" title="ログを展開/縮小">＋</button>
-                メッセージを読み込み中...
-            </div>
-
-            <!-- チャットフォーム -->
-            <form id="chatForm" class="chat-form">
-
-                <div class="form-group">
-                    <label for="message">メッセージ</label>
-                    <input 
-                        type="text" 
-                        id="message" 
-                        class="input-field"
-                        placeholder="メッセージを入力"
-                        autocomplete="off"
-                        required
-                    >
-                </div>
-
-                <button type="submit" class="submit-button">
-                    送信
-                </button>
-
-            </form>
-
+        <!-- メッセージ表示 -->
+        <div id="messages" class="post-history">
+          <button
+            id="panelToggle"
+            class="panel-toggle-button"
+            type="button"
+            title="ログを展開/縮小"
+          >
+            ＋
+          </button>
+          メッセージを読み込み中...
         </div>
+
+        <!-- チャットフォーム -->
+        <form id="chatForm" class="chat-form">
+          <div class="form-group">
+            <label for="message">メッセージ</label>
+            <textarea
+              id="message"
+              class="chat-textarea"
+              placeholder="メッセージを入力..."
+              required
+            ></textarea>
+          </div>
+          <button type="button" id="attachButton" class="attach-button">
+            <i class="fa-solid fa-paperclip"></i>
+          </button>
+
+          <input type="file" id="fileInput" class="file-input" />
+
+          <button type="submit" class="submit-button">送信</button>
+        </form>
+      </div>
     </div>
 
     <script>
+      let currentGenre = "";
 
-        let currentGenre = "";
+      // ジャンル選択
+      document.querySelectorAll(".genreButton").forEach((button) => {
+        button.addEventListener("click", function () {
+          currentGenre = this.dataset.genre;
 
-        // ジャンル選択
-        document.querySelectorAll('.genreButton').forEach(button => {
+          document.getElementById("chatTitle").textContent =
+            currentGenre + " のチャット";
 
-            button.addEventListener('click', function() {
+          document.getElementById("genreListPage").style.display = "none";
+          document.getElementById("controlebar").style.display = "none";
 
-                currentGenre = this.dataset.genre;
+          document.getElementById("chatPage").style.display = "block";
 
-                document.getElementById('chatTitle').textContent =
-                    currentGenre + " のチャット";
+          loadMessages();
+        });
+      });
 
-                document.getElementById('genreListPage').style.display = 'none';
-                document.getElementById('controlebar').style.display = 'none';
+      // 戻るボタン
+      document
+        .getElementById("backButton")
+        .addEventListener("click", function () {
+          document.getElementById("chatPage").style.display = "none";
 
-                document.getElementById('chatPage').style.display = 'block';
+          document.getElementById("genreListPage").style.display = "flex";
 
-                loadMessages();
-            });
-
+          document.getElementById("controlebar").style.display = "block";
         });
 
-        // 戻るボタン
-        document.getElementById('backButton').addEventListener('click', function() {
+      // メッセージ読み込み
+      async function loadMessages() {
+        try {
+          const response = await fetch(
+            "php/chat_get.php?genre=" + encodeURIComponent(currentGenre),
+          );
 
-            document.getElementById('chatPage').style.display = 'none';
+          const data = await response.json();
 
-            document.getElementById('genreListPage').style.display = 'flex';
+          const container = document.getElementById("messages");
 
-            document.getElementById('controlebar').style.display = 'block';
+          if (!data.messages || data.messages.length === 0) {
+            container.innerHTML =
+              '<p style="text-align:center;">まだメッセージはありません</p>';
 
-        });
+            return;
+          }
 
-        // メッセージ読み込み
-        async function loadMessages() {
-
-            try {
-
-                const response = await fetch(
-                    'php/chat_get.php?genre=' + encodeURIComponent(currentGenre)
-                );
-
-                const data = await response.json();
-
-                const container = document.getElementById('messages');
-
-                if (!data.messages || data.messages.length === 0) {
-
-                    container.innerHTML =
-                        '<p style="text-align:center;">まだメッセージはありません</p>';
-
-                    return;
-                }
-
-                container.innerHTML = data.messages.map(msg => `
+          container.innerHTML = data.messages
+            .map(
+              (msg) => `
 
                     <div id="postList">
                         <li>
@@ -221,95 +261,82 @@
                         </li>
                     </div>
 
-                `).join('');
+                `,
+            )
+            .join("");
+        } catch (error) {
+          document.getElementById("messages").innerHTML =
+            "メッセージの取得に失敗しました";
 
-            } catch(error) {
-
-                document.getElementById('messages').innerHTML =
-                    'メッセージの取得に失敗しました';
-
-                console.error(error);
-
-            }
-
+          console.error(error);
         }
+      }
 
-        // 投稿処理
-        document.getElementById('chatForm').addEventListener(
-            'submit',
-            async function(event) {
+      // 投稿処理
+      document
+        .getElementById("chatForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
 
-                event.preventDefault();
+          const message = document.getElementById("message").value.trim();
 
-                const message =
-                    document.getElementById('message').value.trim();
+          if (!message) return;
 
-                if (!message) return;
+          try {
+            await fetch("php/chat_post.php", {
+              method: "POST",
 
-                try {
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
 
-                    await fetch('php/chat_post.php', {
+              body: new URLSearchParams({
+                message: message,
+                genre: currentGenre,
+              }),
+            });
 
-                        method: 'POST',
+            document.getElementById("message").value = "";
 
-                        headers: {
-                            'Content-Type':
-                            'application/x-www-form-urlencoded'
-                        },
-
-                        body: new URLSearchParams({
-                            message: message,
-                            genre: currentGenre
-                        })
-
-                    });
-
-                    document.getElementById('message').value = '';
-
-                    await loadMessages();
-
-                } catch(error) {
-
-                    console.error(error);
-
-                }
-
-            }
-        );
-
-        // 送信に向けた添付ボタン
-        document.getElementById('attachButton').addEventListener('click', function() {
-            document.getElementById('fileInput').click();
+            await loadMessages();
+          } catch (error) {
+            console.error(error);
+          }
         });
 
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            if (event.target.files.length > 0) {
-                const fileName = event.target.files[0].name;
-                alert('添付ファイル: ' + fileName);
-            }
+      // 送信に向けた添付ボタン
+      document
+        .getElementById("attachButton")
+        .addEventListener("click", function () {
+          document.getElementById("fileInput").click();
         });
 
-        // 入力拡大 / ログ縮小トグル
-        document.getElementById('panelToggle').addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const chatPage = document.getElementById('chatPage');
-            const expanded = chatPage.classList.toggle('expanded-input');
-            this.textContent = expanded ? '−' : '＋';
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", function (event) {
+          if (event.target.files.length > 0) {
+            const fileName = event.target.files[0].name;
+            alert("添付ファイル: " + fileName);
+          }
         });
 
-        // 5秒ごと更新
-        setInterval(() => {
+      // 入力拡大 / ログ縮小トグル
+      document
+        .getElementById("panelToggle")
+        .addEventListener("click", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const chatPage = document.getElementById("chatPage");
+          const expanded = chatPage.classList.toggle("expanded-input");
+          this.textContent = expanded ? "−" : "＋";
+        });
 
-            if (
-                document.getElementById('chatPage').style.display === 'block'
-            ) {
-                loadMessages();
-            }
-
-        }, 5000);
-
+      // 5秒ごと更新
+      setInterval(() => {
+        if (document.getElementById("chatPage").style.display === "block") {
+          loadMessages();
+        }
+      }, 5000);
     </script>
-
-</body>
+  </body>
 </html>

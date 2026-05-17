@@ -14,9 +14,9 @@ html {
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: #222;
-  background-image: url('image/backimage.jpg');
+  background-image: url("image/backimage.jpg");
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
@@ -79,24 +79,42 @@ body {
   color: #081b33;
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 22px;
-  background: linear-gradient(145deg, rgba(137, 192, 255, 0.96), rgba(92, 152, 234, 0.92));
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14), 0 18px 38px rgba(0, 24, 75, 0.22);
+  background: linear-gradient(
+    145deg,
+    rgba(137, 192, 255, 0.96),
+    rgba(92, 152, 234, 0.92)
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    0 18px 38px rgba(0, 24, 75, 0.22);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.24s ease, box-shadow 0.24s ease, background 0.24s ease;
+  transition:
+    transform 0.24s ease,
+    box-shadow 0.24s ease,
+    background 0.24s ease;
   text-align: left;
   overflow: hidden;
 }
 
 .genreButton::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at top left, rgba(255,255,255,0.18), transparent 24%),
-              radial-gradient(circle at bottom right, rgba(173, 216, 255, 0.18), transparent 26%);
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(255, 255, 255, 0.18),
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(173, 216, 255, 0.18),
+      transparent 26%
+    );
   opacity: 0.95;
   pointer-events: none;
   transform: translate(-10%, -10%);
@@ -104,13 +122,21 @@ body {
 
 .genreButton:hover {
   transform: translateY(-3px);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18), 0 26px 50px rgba(0, 18, 44, 0.32);
-  background: linear-gradient(145deg, rgba(181, 214, 255, 1), rgba(115, 169, 238, 0.98));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    0 26px 50px rgba(0, 18, 44, 0.32);
+  background: linear-gradient(
+    145deg,
+    rgba(181, 214, 255, 1),
+    rgba(115, 169, 238, 0.98)
+  );
 }
 
 .genreButton:active {
   transform: translateY(0);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), 0 12px 24px rgba(0, 18, 44, 0.22);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 12px 24px rgba(0, 18, 44, 0.22);
 }
 
 .genreButton i {
@@ -123,24 +149,52 @@ body {
   flex: 1;
 }
 
-.chat-form {
-  display: grid;
-  gap: 1rem;
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+
+  background: black;
+
+  color: #42ff42;
+
+  padding: 10px 0;
+
+  border-radius: 8px;
+
+  font-weight: bold;
 }
 
-#messages {
-  min-height: 320px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+.ticker {
+  display: inline-block;
+
+  white-space: nowrap;
+
+  padding-left: 100%;
+
+  animation: tickerMove 15s linear infinite;
+}
+
+@keyframes tickerMove {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
 }
 
 #messages p {
   margin: 0;
   color: #444;
 }
+.chat-textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: none;
 
+  transition: all 0.5s ease;
+}
 .chat-header-row {
   display: flex;
   flex-wrap: wrap;
@@ -150,27 +204,38 @@ body {
   margin-bottom: 1rem;
 }
 
-.panel-toggle-button,
 .submit-button,
 #backButton,
 .attach-button {
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
 .panel-toggle-button {
   position: absolute;
-  top: 1.2rem;
-  left: 1.2rem;
-  padding: 0.4rem 0.6rem;
-  background: linear-gradient(135deg, #2f71b2, #1d4e89);
+
+  top: 10px;
+  left: 10px;
+
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #2f71b2;
   color: white;
-  font-weight: 700;
-  font-size: 1.2rem;
-  min-width: auto;
-  z-index: 10;
+
+  z-index: 9999;
 }
 
 .panel-toggle-button:hover,
@@ -178,11 +243,6 @@ body {
 #backButton:hover,
 .attach-button:hover {
   transform: translateY(-1px);
-}
-
-.chat-form {
-  display: block;
-  gap: 1rem;
 }
 
 .chat-compose-row {
@@ -243,12 +303,11 @@ body {
 }
 
 #chatPage.expanded-input #messages {
-  min-height: 40px;
-  max-height: 10vh;
+  height: 80px;
 }
 
 #chatPage.expanded-input .chat-textarea {
-  min-height: 380px;
+  min-height: 300px;
 }
 
 #chatPage.expanded-input .chat-compose-row {
@@ -362,7 +421,9 @@ textarea {
   border-radius: 8px;
   font-family: inherit;
   font-size: 1rem;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 input:focus,
@@ -504,13 +565,13 @@ body.home-page {
 }
 
 body.home-page::before {
-  content: '';
+  content: "";
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('images/backimage.jpg');
+  background-image: url("images/backimage.jpg");
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
@@ -547,13 +608,13 @@ body.auth-page {
 }
 
 body.auth-page::before {
-  content: '';
+  content: "";
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('images/backimage.jpg');
+  background-image: url("images/backimage.jpg");
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
@@ -655,12 +716,21 @@ body.auth-page a {
 }
 
 #messages {
+  position: relative;
+
+  height: 50vh;
   min-height: 320px;
-  padding: 1rem;
+
+  padding: 50px 15px 15px 15px;
+
   border: 1px solid #dfe6f0;
   border-radius: 12px;
+
   background: #fbfcff;
+
   overflow-y: auto;
+
+  transition: all 0.5s ease;
 }
 
 .message {
@@ -747,20 +817,44 @@ body.auth-page a {
   text-align: right;
 }
 
-.mt-1 { margin-top: 0.5rem; }
-.mt-2 { margin-top: 1rem; }
-.mt-3 { margin-top: 1.5rem; }
-.mt-4 { margin-top: 2rem; }
+.mt-1 {
+  margin-top: 0.5rem;
+}
+.mt-2 {
+  margin-top: 1rem;
+}
+.mt-3 {
+  margin-top: 1.5rem;
+}
+.mt-4 {
+  margin-top: 2rem;
+}
 
-.mb-1 { margin-bottom: 0.5rem; }
-.mb-2 { margin-bottom: 1rem; }
-.mb-3 { margin-bottom: 1.5rem; }
-.mb-4 { margin-bottom: 2rem; }
+.mb-1 {
+  margin-bottom: 0.5rem;
+}
+.mb-2 {
+  margin-bottom: 1rem;
+}
+.mb-3 {
+  margin-bottom: 1.5rem;
+}
+.mb-4 {
+  margin-bottom: 2rem;
+}
 
-.p-1 { padding: 0.5rem; }
-.p-2 { padding: 1rem; }
-.p-3 { padding: 1.5rem; }
-.p-4 { padding: 2rem; }
+.p-1 {
+  padding: 0.5rem;
+}
+.p-2 {
+  padding: 1rem;
+}
+.p-3 {
+  padding: 1.5rem;
+}
+.p-4 {
+  padding: 2rem;
+}
 
 .hidden {
   display: none;
@@ -827,7 +921,7 @@ body.auth-page a {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('images/backimage.jpg');
+  background-image: url("images/backimage.jpg");
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
@@ -863,8 +957,12 @@ body.auth-page a {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* -------- ナビゲーション -------- */
@@ -973,8 +1071,13 @@ body.auth-page a {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 /* -------- 機能セクション -------- */
@@ -1124,7 +1227,11 @@ body.auth-page a {
 /* -------- CTA セクション -------- */
 .cta-section {
   padding: 5rem 0;
-  background: linear-gradient(135deg, rgba(29, 78, 137, 0.8) 0%, rgba(47, 113, 178, 0.8) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(29, 78, 137, 0.8) 0%,
+    rgba(47, 113, 178, 0.8) 100%
+  );
 }
 
 .cta-box {
