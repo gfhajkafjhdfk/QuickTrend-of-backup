@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Mapbox Trend 3D</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+
+  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" type="text/css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+  <style>
+    body { margin: 0; padding: 0; overflow: hidden; }
+    #map { width: 100vw; height: 100vh; }
+    
+    /* 案内テロップ（5秒後に消える） */
+    .info-banner {
+      position: absolute; top: 80px; left: 50%; transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85); color: #fff; 
+      padding: 12px 24px; border-radius: 30px; 
+      font-size: 14px; font-weight: bold;
+      z-index: 10; pointer-events: none;
+      text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: opacity 1s ease-out;
+    }
+    
+
+    /* 通知メッセージ（クリック時） */
+    #notification {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      background: #00C853; color: white; padding: 10px 20px; border-radius: 5px;
+      opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 20;
+      font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* エラー表示 */
+    #error-notification {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      background: #FF5252; color: white; padding: 10px 20px; border-radius: 5px;
+      opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 20;
+      font-weight: bold; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* 昼夜切り替えボタン（コンパスと被らないよう少し左へ） */
+    .style-controls {
+      position: absolute; top: 10px; right: 60px; z-index: 10;
+      background: rgba(255,255,255,0.9); padding: 4px; border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .style-controls button {
+      cursor: pointer; padding: 6px 12px; border: 1px solid #ddd;
+      background: #fff; border-radius: 4px; font-size: 12px;
+    }
+    .style-controls button:hover { background: #eee; }
+
+    /* 3D切り替えなどの操作ボタン（左下に配置） */
+    .view-controls {
+      position: absolute; bottom: 40px; left: 20px;
+      display: flex; flex-direction: column; gap: 10px; z-index: 10;
+    }
+    .view-controls button {
+      padding: 0; border-radius: 50%; border: none;
+      background: #fff; color: #333; width: 40px; height: 40px;
+      cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      font-weight: bold; font-size: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .view-controls button:hover { background: #f0f0f0; }
+    .view-controls button:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    /* 戻るボタン：コンパクト→ホバー/フォーカスで展開するギミック */
+    .back-button {
+      position: absolute; top: 64px; left: 12px; z-index: 1200;
+      display: inline-flex; align-items: center; gap: 8px;
+      width: 44px; height: 44px; padding: 0; color: #0f1724; text-decoration: none;
+      background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(247,250,253,0.98));
+      border-radius: 999px; border: 1px solid rgba(15,23,36,0.06);
+      box-shadow: 0 8px 18px rgba(2,6,23,0.12); font-weight: 700; font-size: 14px;
+      justify-content: center; transition: width 280ms cubic-bezier(.2,.9,.3,1), padding 280ms, border-radius 220ms, box-shadow 220ms, transform 220ms;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      transform-origin: left center; cursor: pointer; user-select: none;
+      will-change: transform, width;
+    }
+    .back-button .arrow { display:inline-block; font-size:16px; transition: transform 220ms; }
+    .back-button .label {
+      display:inline-block; max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap;
+      margin-left: 8px; transform: translateX(-6px);
+      transition: max-width 280ms cubic-bezier(.2,.9,.3,1), opacity 200ms, transform 280ms;
+    }
+
+    /* ホバーまたはフォーカスで展開 */
+    .back-button:hover, .back-button:focus, .back-button:focus-visible {
+      width: auto; padding: 8px 14px; border-radius: 10px; justify-content: flex-start;
+      transform: translateY(-6px) scale(1.02); box-shadow: 0 14px 28px rgba(2,6,23,0.16);
+    }
+    .back-button:hover .label, .back-button:focus .label, .back-button:focus-visible .label {
+      max-width: 200px; opacity: 1; transform: translateX(0);
+    }
+    .back-button:hover .arrow, .back-button:focus .arrow, .back-button:focus-visible .arrow { transform: translateX(-6px) rotate(-8deg); }
+    .back-button:active { transform: scale(0.98); }
+    .back-button:focus-visible { outline: 3px solid rgba(59,130,246,0.14); outline-offset: 2px; }
+
+    @keyframes bt-float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+      100% { transform: translateY(0); }
+    }
+
+    /* 小さい画面では左下に移動して邪魔にならないようにする */
+    @media (max-width: 640px) {
+      .back-button { top: auto; left: 12px; bottom: 18px; animation: none; }
+    }
+
+    /* ポップアップ詳細表示スタイル */
+    .mapboxgl-popup-content {
+      background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(247,250,253,0.98)) !important;
+      border-radius: 12px !important;
+      padding: 16px !important;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+      max-width: 320px;
+    }
+    .mapboxgl-popup-close-button {
+      color: #0f1724 !important;
+      font-size: 20px !important;
+      width: 32px !important;
+      height: 32px !important;
+    }
+    .mapboxgl-popup-tip {
+      border-top-color: rgba(255,255,255,0.98) !important;
+    }
+    .popup-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: #0f1724;
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+    .popup-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .popup-stat-label { font-weight: 500; }
+    .popup-stat-value {
+      font-weight: 700;
+      font-size: 16px;
+      color: #0f1724;
+    }
+    .popup-action {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e0e0e0;
+    }
+    .popup-action button {
+      width: 100%;
+      padding: 8px;
+      background: linear-gradient(135deg, #3F51B5, #2196F3);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .popup-action button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+    }
+    .popup-action button:active {
+      transform: scale(0.98);
+    }
+
+    /* ========== ランキングパネル ========== */
+    .ranking-panel {
+      position: absolute;
+      bottom: 155px;
+      right: 12px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(247, 250, 253, 0.97));
+      border-radius: 16px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      z-index: 950;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 300ms cubic-bezier(0.2, 0.8, 0.3, 1);
+    }
+
+    .ranking-panel.ranking-panel-expanded {
+      width: 280px;
+      max-height: 450px;
+    }
+
+    .ranking-panel.ranking-panel-collapsed {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      overflow: visible;
+      bottom: 100px;
+    }
+
+    .ranking-panel-expanded {
+      animation: slideInRight 320ms cubic-bezier(0.2, 0.8, 0.3, 1);
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .ranking-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      background: linear-gradient(135deg, rgba(255, 200, 124, 0.15), rgba(255, 152, 0, 0.1));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .ranking-panel-collapsed .ranking-header {
+      border-bottom: none;
+      padding: 0;
+      background: transparent;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      justify-content: center;
+    }
+
+    .ranking-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f1724;
+      text-align: center;
+      letter-spacing: 0.5px;
+      flex: 1;
+    }
+
+    .ranking-panel-collapsed .ranking-title {
+      display: none;
+    }
+
+    .ranking-toggle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 152, 0, 0.2);
+      border: 1px solid rgba(255, 152, 0, 0.3);
+      color: #FF9800;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 200ms;
+      flex-shrink: 0;
+      padding: 0;
+    }
+
+    .ranking-toggle-btn:hover {
+      background: rgba(255, 152, 0, 0.3);
+      transform: scale(1.1);
+    }
+
+    .ranking-toggle-btn:active {
+      transform: scale(0.95);
+    }
+
+    .ranking-panel-collapsed .ranking-toggle-btn {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, rgba(255, 200, 124, 0.4), rgba(255, 152, 0, 0.3));
+      border: 2px solid rgba(255, 152, 0, 0.5);
+      font-size: 24px;
+      color: #FF9800;
+      box-shadow: 0 4px 12px rgba(255, 152, 0, 0.25);
+    }
+
+    .ranking-panel-collapsed .ranking-toggle-btn:hover {
+      background: linear-gradient(135deg, rgba(255, 200, 124, 0.5), rgba(255, 152, 0, 0.4));
+      box-shadow: 0 6px 16px rgba(255, 152, 0, 0.35);
+    }
+
+    .ranking-list {
+      list-style: none;
+      margin: 0;
+      padding: 8px 0;
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: block;
+    }
+
+    .ranking-panel-collapsed .ranking-list {
+      display: none;
+    }
+
+    .ranking-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .ranking-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .ranking-list::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 3px;
+    }
+
+    .ranking-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.25);
+    }
+
+    .ranking-item, .ranking-item-skeleton {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      margin: 4px 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 200ms cubic-bezier(0.2, 0.8, 0.3, 1);
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .ranking-item {
+      gap: 8px;
+    }
+
+    .ranking-item:hover {
+      background: rgba(255, 152, 0, 0.12);
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(255, 152, 0, 0.1);
+    }
+
+    .ranking-item-skeleton {
+      color: #999;
+      opacity: 0.7;
+    }
+
+    .ranking-rank {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FF9800, #FFC107);
+      color: white;
+      font-weight: 700;
+      font-size: 12px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(255, 152, 0, 0.3);
+    }
+
+    .ranking-name {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 600;
+      color: #0f1724;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ranking-count {
+      min-width: 50px;
+      text-align: right;
+      font-size: 13px;
+      font-weight: 700;
+      color: #FF5252;
+      flex-shrink: 0;
+    }
+
+    /* モバイル対応 */
+    @media (max-width: 768px) {
+      .ranking-panel.ranking-panel-expanded {
+        bottom: 80px;
+        right: 8px;
+        width: 260px;
+        max-height: 380px;
+      }
+
+      .ranking-header {
+        padding: 12px 12px;
+      }
+
+      .ranking-title {
+        font-size: 14px;
+      }
+
+      .ranking-item, .ranking-item-skeleton {
+        padding: 8px 10px;
+        margin: 3px 6px;
+      }
+
+      .ranking-rank {
+        min-width: 24px;
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+      }
+
+      .ranking-name {
+        font-size: 12px;
+      }
+
+      .ranking-count {
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .ranking-panel {
+        bottom: 70px;
+        right: 4px;
+        left: 4px;
+        width: auto;
+        max-height: 320px;
+      }
+
+      .ranking-title {
+        font-size: 13px;
+      }
+
+      .ranking-item, .ranking-item-skeleton {
+        padding: 7px 8px;
+        margin: 2px 4px;
+      }
+    }
+  </style>
+  
+  <script src="map.js"></script>
+</head>
+
+<body>
+
+  <div id="map"></div>
+  
+  <!-- ランキングパネル（最小化可能） -->
+  <div id="ranking-panel" class="ranking-panel ranking-panel-expanded" role="complementary" aria-label="人気ランキング">
+    <div class="ranking-header">
+      <h2 class="ranking-title">🏆 人気ランキング</h2>
+      <button id="ranking-toggle-btn" class="ranking-toggle-btn" aria-label="ランキングパネルを最小化" onclick="toggleRankingPanel()" title="最小化">−</button>
+    </div>
+    <ul id="ranking-list" class="ranking-list" role="list">
+      <li class="ranking-item-skeleton" role="status" aria-live="polite">
+        <span class="ranking-rank">-</span>
+        <span class="ranking-name">読み込み中...</span>
+        <span class="ranking-count">-</span>
+      </li>
+    </ul>
+  </div>
+
+  <div id="info-banner" class="info-banner" role="status" aria-live="polite">
+    店舗をクリックして投票！<br>
+    <span style="font-size:0.8em; color:#ccc; font-weight:normal;">みんなの投票でグラフが伸びます</span>
+  </div>
+  
+  <div id="notification" role="status" aria-live="assertive">投票しました！ (+1)</div>
+  <div id="error-notification" role="alert" aria-live="assertive"></div>
+
+  <a href="QuickTrend.php" class="back-button" aria-label="QuickTrend に戻る">
+    <span class="arrow">←</span>
+    <span class="label">QuickTrend に戻る</span>
+  </a>
+
+  <div class="style-controls">
+    <button onclick="setStyle('day')" aria-label="昼間モード">☀️ 昼</button>
+    <button onclick="setStyle('night')" aria-label="夜間モード">🌙 夜</button>
+  </div>
+
+  <div class="view-controls">
+    <button onclick="setView('top')" aria-label="2D表示に切り替え">2D</button>
+    <button onclick="setView('3d')" aria-label="3D表示に切り替え">3D</button>
+  </div>
+
+  <script>
+    /* ============================================================
+       セキュリティ設定
+       ============================================================
+       【Mapboxアクセストークン】
+       - フロントエンドに直書きしていますが、Mapboxのドメイン制限
+         を必ず設定してください（https://account.mapbox.com）
+       - 本番環境ではトークンを環境変数またはサーバ側から配信を推奨
+       - 定期的なトークン更新を実装してください
+    */
+    mapboxgl.accessToken = 'pk.eyJ1Ijoid3BwZXIiLCJhIjoiY21qM3RtYXZqMTljYzNkcTByOWdkeDk3ciJ9.xNRmm0JxvqZj3XFtLzLObw'; 
+
+    /* ============================================================
+       アプリケーション設定
+       ============================================================ */
+    const MAP_CONFIG = {
+      center: [139.7683, 35.68357],
+      defaultZoom: 16.5,
+      defaultPitch: 60,
+      defaultBearing: -20,
+      lod: {
+        low: 14,        // LOD切り替え境界: 14ズーム以下で2D表示
+        high: 15
+      }
+    };
+
+    const API_URL = 'api.php';
+    
+    /* ============================================================
+       不正投票対策：クライアント側レート制限
+       ============================================================
+       - 同一店舗への投票は5秒以内は禁止
+       - セッション単位で管理（sessionStorageで軽実装）
+       
+       【サーバ側で実装すべき対策】
+       1. IP + ユーザID + 店舗ID の組み合わせでレート制限（1分1回など）
+       2. 異常パターン検知（短時間での大量投票）
+       3. リクエスト署名検証（CSRF対策）
+       4. タイムスタンプ検証（クライアント側時刻改ざん対策）
+       5. API呼び出し元の妥当性チェック（Refererヘッダなど）
+    */
+    const VOTE_THROTTLE_MS = 5000; // 同一店舗への投票禁止期間
+    const lastVoteTime = {}; // { locationName: timestamp }
+    let isVoteLocked = false;
+
+    // --- マップ初期化 ---
+    const map = new mapboxgl.Map({
+      container: 'map',
+      center: MAP_CONFIG.center,
+      zoom: MAP_CONFIG.defaultZoom,
+      style: 'mapbox://styles/mapbox/streets-v12',
+      pitch: MAP_CONFIG.defaultPitch,
+      bearing: MAP_CONFIG.defaultBearing,
+      antialias: true,
+      preserveDrawingBuffer: true
+    });
+
+    // --- データ管理 ---
+    /* システム状態管理:
+       - peopleGeoJSON: マップに表示される全フィーチャー（各フィーチャーには count, pending_local, display_count, display_height を含む）
+       - featureIdMap: { "name|lng|lat" -> arrayIndex } で既存フィーチャーを高速に検索
+       - pendingIncrements: { "name|lng|lat" -> integer } 未送信の投票数を追跡（楽観的UI更新用）
+       - popupOpen: 現在表示中のポップアップ参照（複数ポップアップの重複を防ぐ）
+       
+       処理フロー:
+       1. ユーザがポイントをタップ → optimisticIncrement() が pendingIncrements を +1
+       2. pending_local を更新 → computeDisplayForProps() で display_count/display_height を再計算
+       3. マップをリアルタイム更新（UI即座に反映）
+       4. sendDataToAPI() でサーバに送信
+       5. レスポンス時に pending を -1 → fetchAndUpdateData() で最終確定値を取得
+    */
+    let peopleGeoJSON = { type: 'FeatureCollection', features: [] };
+    let lastFetchTime = 0;
+    const MIN_FETCH_INTERVAL = 30000; // 最低30秒間隔のみで更新
+    let dataUpdateTimeout = null;
+    let featureIdMap = new Map(); // { "name|lng|lat": featureIndex } で既存フィーチャーを追跡
+    let popupOpen = null; // 現在開いているポップアップ
+    let pendingIncrements = new Map(); // feature_id -> pending local increments
+
+    function revertOptimisticIncrement(featureId) {
+      if (!featureId) return;
+      // pending を1つ減らす
+      if (pendingIncrements.has(featureId)) {
+        const prev = parseInt(pendingIncrements.get(featureId) || 0, 10) || 0;
+        const v = prev - 1;
+        if (v <= 0) pendingIncrements.delete(featureId);
+        else pendingIncrements.set(featureId, v);
+      }
+
+      // フィーチャーの pending_local を更新して表示を戻す
+      if (featureIdMap.has(featureId)) {
+        const idx = featureIdMap.get(featureId);
+        if (peopleGeoJSON.features[idx]) {
+          const f = peopleGeoJSON.features[idx];
+          const p = pendingIncrements.get(featureId) || 0;
+          if (p > 0) f.properties.pending_local = p;
+          else delete f.properties.pending_local;
+          computeDisplayForProps(f.properties);
+          f.properties.last_updated = Date.now();
+        }
+      }
+      const src = map.getSource('people'); if (src) src.setData(peopleGeoJSON);
+      // トップマーカー更新（display_count / display_height は既に計算済み）
+      const tops = peopleGeoJSON.features.map(f => {
+        const cent = turf.centroid(f).geometry.coordinates;
+        return turf.point([cent[0], cent[1]], {
+          count: f.properties.count,
+          pending_local: f.properties.pending_local || 0,
+          display_count: Number(f.properties.display_count) || 0,
+          display_height: Number(f.properties.display_height) || 0,
+          name: f.properties.name,
+          feature_id: f.properties.feature_id
+        });
+      });
+      const topsSrc = map.getSource('people-tops'); if (topsSrc) topsSrc.setData(turf.featureCollection(tops));
+    }
+
+    // --- コントロール初期化 ---
+    
+    // 1. 検索機能
+    const geocoder = new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl,
+      language: 'ja',
+      countries: 'jp',
+      types: 'poi,address',
+      proximity: { longitude: MAP_CONFIG.center[0], latitude: MAP_CONFIG.center[1] },
+      marker: false
+    });
+    map.addControl(geocoder, 'top-left');
+
+    // 2. ナビゲーションコントロール
+    const nav = new mapboxgl.NavigationControl({
+      showZoom: false,
+      showCompass: true,
+      visualizePitch: true
+    });
+    map.addControl(nav, 'top-right');
+
+    /* ============================================================
+       レイヤー管理
+       ============================================================ */
+    function addLayers() {
+      if (map.getSource('people')) return;
+
+      // 1. 背景の3D建物 (半透明) - 高ズーム時のみ
+      if (!map.getLayer('3d-buildings')) {
+        map.addLayer({
+          id: '3d-buildings',
+          source: 'composite',
+          'source-layer': 'building',
+          filter: ['==', 'extrude', 'true'],
+          type: 'fill-extrusion',
+          minzoom: 15,
+          paint: {
+            'fill-extrusion-color': '#888',
+            'fill-extrusion-height': ['get', 'height'],
+            'fill-extrusion-base': ['get', 'min_height'],
+            'fill-extrusion-opacity': 0.3
+          }
+        });
+      }
+
+      // 2. 店舗判定用ラベル（テキストのみ表示）
+      if (!map.getLayer('custom-poi-labels')) {
+        map.addLayer({
+          id: 'custom-poi-labels',
+          type: 'symbol',
+          source: 'composite',
+          'source-layer': 'poi_label',
+          minzoom: 14,
+          layout: {
+            'text-field': ['get', 'name'],
+            'text-size': 11,
+            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-offset': [0, 0],
+            'text-anchor': 'center',
+            'text-max-width': 7,
+            'text-allow-overlap': false,
+            'text-ignore-placement': false
+          },
+          paint: {
+            'text-color': '#333',                    // 濃い色のテキスト
+            'text-halo-color': 'rgba(255,255,255,0.9)',      // 白いハロー
+            'text-halo-width': 1.5             // ハロー幅
+          }
+        });
+      }
+
+      // 3. データソース
+      map.addSource('people', { type: 'geojson', data: peopleGeoJSON });
+      // 集約ポイントのセンターポイント（トップマーカー用）
+      map.addSource('people-tops', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      // 選択中の建物を保持するソース
+      map.addSource('selected-building', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      // 一時ハイライト（クリック時の円）
+      map.addSource('selected', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+
+      // 4a. トレンドグラフ 3D表示 (高ズーム時)
+      map.addLayer({
+        id: 'trend-bars-3d',
+        type: 'fill-extrusion',
+        source: 'people',
+        minzoom: MAP_CONFIG.lod.high,
+        paint: {
+          'fill-extrusion-color': getBarColor(),
+          // ベースは建物の高さに合わせ、棒グラフの伸びを加算する
+          'fill-extrusion-base': ['coalesce', ['get', 'building_height'], 0],
+          'fill-extrusion-height': ['+', ['coalesce', ['get', 'building_height'], 0], ['coalesce', ['get', 'display_height'], 0]],
+          'fill-extrusion-opacity': 0.92
+        }
+      });
+
+      // 4b. トレンドグラフ 2D表示 (低ズーム時) - 軽量版
+      map.addLayer({
+        id: 'trend-bars-2d',
+        type: 'circle',
+        source: 'people',
+        maxzoom: MAP_CONFIG.lod.high,
+        paint: {
+          'circle-radius': ['interpolate', ['linear'], getDisplayCountExpr(), 0, 3, 10, 8, 50, 15, 300, 25],
+          'circle-color': getBarColor(),
+          'circle-opacity': 0.8,
+          'circle-stroke-width': 1,
+          'circle-stroke-color': 'rgba(255, 255, 255, 0.5)'
+        }
+      });
+
+      // トップマーカー（円） - 円柱の上面に表示して建物に隠れにくくする
+      map.addLayer({
+        id: 'trend-tops',
+        type: 'circle',
+        source: 'people-tops',
+        paint: {
+          'circle-color': getBarColor(),
+          'circle-radius': ['interpolate', ['linear'], ['coalesce', ['get', 'display_count'], 0], 0, 6, 10, 8, 50, 12, 100, 16, 300, 22],
+          'circle-stroke-color': '#ffffff',
+          'circle-stroke-width': 1,
+          'circle-opacity': 0.95
+        }
+      });
+
+      // 選択時の一時ハイライト（小さい円）
+      map.addLayer({
+        id: 'selected-highlight',
+        type: 'fill-extrusion',
+        source: 'selected',
+        paint: {
+          'fill-extrusion-color': '#00E676',
+          'fill-extrusion-base': ['coalesce', ['get', 'building_height'], 0],
+          'fill-extrusion-height': ['+', ['coalesce', ['get', 'building_height'], 0], 2.5],
+          'fill-extrusion-opacity': 0.92
+        }
+      });
+
+      // 選択建物のハイライト（建物ポリゴンそのものを上方に着色）
+      map.addLayer({
+        id: 'highlight-building',
+        type: 'fill-extrusion',
+        source: 'selected-building',
+        paint: {
+          'fill-extrusion-color': '#FFF176',
+          'fill-extrusion-height': ['coalesce', ['get', 'highlight_height'], 10],
+          'fill-extrusion-base': ['coalesce', ['get', 'min_height'], 0],
+          'fill-extrusion-opacity': 0.7
+        }
+      });
+      // マウスポインタのハンドル
+      map.on('mouseenter', 'custom-poi-labels', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      map.on('mouseleave', 'custom-poi-labels', () => {
+        map.getCanvas().style.cursor = '';
+      });
+    }
+
+    /* ============================================================
+       ヘルパー関数
+       ============================================================ */
+    
+    /**
+     * 棒グラフの色を返す
+     * カラー補間ロジック
+     */
+    function getDisplayCountExpr() {
+      // Use precomputed `display_count` property (number) to avoid Mapbox internal expression math issues
+      return ['coalesce', ['get', 'display_count'], 0];
+    }
+
+    function getBarColor() {
+      const disp = getDisplayCountExpr();
+      return [
+        'interpolate', ['linear'], disp,
+        0, '#4FC3F7',   // 0人
+        10, '#29B6F6',
+        50, '#FFD54F',  // 50人
+        100, '#FF5252', // 100人
+        300, '#D50000'  // 300人
+      ];
+    }
+
+    /**
+     * 棒グラフの高さを返す
+     * 1〜5人: 固定（7.5m）
+     * 6人以上: 滑らかに増加
+     */
+    function getBarHeight() {
+      // Use precomputed `display_height` property (number)
+      return ['coalesce', ['get', 'display_height'], 0];
+    }
+
+    /**
+     * Compute display_count and display_height from server count and pending_local.
+     * - display_count = count + pending_local
+     * - display_height = 0 when display_count == 0
+     *                    = 7.5 when 1..5
+     *                    = display_count * 1.5 when >=6
+     */
+    /* ============================================================
+       データ表示の統一的な計算ロジック
+       ============================================================
+       
+       システム設計の原則:
+       - すべての表示（UI ポップアップ、マップ表示）は 'display_count' を源泉とする
+       - display_count = count（サーバ確定値）+ pending_local（クライアント側の保留中投票数）
+       - display_height = (display_count <= 5) ? 7.5m : display_count * 1.5m
+       
+       データフロー:
+       1. サーバからの count（確定値）を受け取る
+       2. クライアント側の pending_local（未送信投票）を加算
+       3. computeDisplayForProps() で display_count / display_height を一度だけ計算
+       4. すべてのコンポーネント（マップ、ポップアップ）が計算済みの値を参照する
+       
+       これにより、表示のズレや再計算の矛盾が排除され、
+       投票処理が正確に +1 ずつ反映される仕組みになる。
+       ============================================================ */
+
+    function computeDisplayForProps(props) {
+      if (!props) return;
+      const base = parseInt(props.count, 10) || 0;
+      const pend = parseInt(props.pending_local, 10) || 0;
+      const disp = base + pend;
+      props.display_count = disp;
+      if (disp === 0) props.display_height = 0;
+      else if (disp <= 5) props.display_height = 7.5;
+      else props.display_height = disp * 1.5;
+    }
+
+    /**
+     * APIレスポンスの妥当性をチェック
+     */
+    function validateAPIResponse(data) {
+      if (!data || typeof data !== 'object') {
+        throw new Error('無効なレスポンス形式');
+      }
+      if (!Array.isArray(data.features)) {
+        throw new Error('featureが配列ではありません');
+      }
+      // 各フィーチャーの基本検証
+      data.features.forEach((feature, idx) => {
+        if (!feature.geometry || !Array.isArray(feature.geometry.coordinates)) {
+          throw new Error(`フィーチャー${idx}: 座標が無効`);
+        }
+        if (typeof feature.properties?.count !== 'number' || feature.properties.count < 0) {
+          throw new Error(`フィーチャー${idx}: countが無効`);
+        }
+      });
+      return true;
+    }
+
+    /**
+     * エラーメッセージを表示
+     */
+    function showError(message) {
+      const errorNotif = document.getElementById('error-notification');
+      errorNotif.textContent = message;
+      errorNotif.style.opacity = '1';
+      setTimeout(() => { errorNotif.style.opacity = '0'; }, 3000);
+      console.error('[Map Error]', message);
+    }
+
+    /* ============================================================
+       データ更新ロジック
+       ============================================================ */
+    
+    /**
+     * イベント駆動またはポーリングでデータを取得
+     * - 投票後は即座に更新
+     * - 通常時は30秒以上間隔を開ける
+     */
+    async function fetchAndUpdateData(isImmediate = false) {
+      const now = Date.now();
+      
+      // レート制限チェック
+      if (!isImmediate && (now - lastFetchTime < MIN_FETCH_INTERVAL)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'GET',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
+
+        if (!response.ok) {
+          if (response.status === 429) {
+            showError('サーバが混雑しています。しばらく待ってからお試しください');
+          } else if (response.status >= 500) {
+            showError('サーバーエラーが発生しました');
+          } else {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          return;
+        }
+
+        const apiData = await response.json();
+
+        // レスポンス検証
+        validateAPIResponse(apiData);
+
+        // --- 統合処理: 同一店舗名かつ20m以内をマージ ---
+        const rawPoints = apiData.features.map(f => ({
+          coords: f.geometry.coordinates.slice(),
+          props: Object.assign({}, f.properties)
+        }));
+
+        const clusters = [];
+        const THRESH_KM = 0.02; // 20m
+
+        rawPoints.forEach(p => {
+          const [lng, lat] = p.coords;
+          let merged = false;
+          for (const c of clusters) {
+            // 同名かつ近ければマージ
+            if (c.name && p.props.name && c.name === p.props.name) {
+              const dist = turf.distance(turf.point([c.centroid[0], c.centroid[1]]), turf.point([lng, lat]), { units: 'kilometers' });
+              if (dist <= THRESH_KM) {
+                c.count += (Number(p.props.count) || 0);
+                c.sumLng += lng; c.sumLat += lat; c.n++;
+                c.names.push(p.props.name);
+                c.centroid = [c.sumLng / c.n, c.sumLat / c.n];
+                merged = true; break;
+              }
+            }
+          }
+          if (!merged) {
+            clusters.push({
+              name: p.props.name || null,
+              count: Number(p.props.count) || 0,
+              sumLng: p.coords[0], sumLat: p.coords[1], n: 1,
+              centroid: [p.coords[0], p.coords[1]],
+              names: p.props.name ? [p.props.name] : []
+            });
+          }
+        });
+
+        // 生成するフィーチャー
+        const newFeatures = [];
+        const topPoints = [];
+
+        for (const c of clusters) {
+          const [lng, lat] = c.centroid;
+
+          // 建物の高さを取得（存在すればその屋上上に配置する）
+          let buildingHeight = 0;
+          try {
+            if (map && map.getLayer && map.getLayer('3d-buildings')) {
+              const pixel = map.project([lng, lat]);
+              const bldFeats = map.queryRenderedFeatures(pixel, { layers: ['3d-buildings'] });
+              if (bldFeats && bldFeats.length > 0) {
+                const bp = bldFeats[0].properties || {};
+                buildingHeight = Number(bp.height || bp.H || bp.ele || bp.min_height || 0) || 0;
+              }
+            }
+          } catch (e) { buildingHeight = 0; }
+
+          // 円の半径（人数に応じて最小5m〜最大30m程度）
+          const radiusKm = Math.min(0.03, 0.005 + Math.sqrt(Math.max(1, c.count)) * 0.0025);
+          const circle = turf.circle([lng, lat], radiusKm, { steps: 16, units: 'kilometers' });
+
+          // フィーチャーの一意ID（nameと座標で識別） — 座標は小数点4桁で丸める
+          const featureId = `${c.name || 'unknown'}|${lng.toFixed(4)}|${lat.toFixed(4)}`;
+
+          // 既存フィーチャーがあるかチェック
+          let featureIndex = -1;
+          if (featureIdMap.has(featureId)) {
+            featureIndex = featureIdMap.get(featureId);
+          }
+
+          // pendingIncrements があれば加算して表示上のカウントを増やす
+          const pending = parseInt(pendingIncrements.get(featureId) || 0, 10) || 0;
+            circle.properties = {
+              count: c.count, // authoritative server count
+              pending_local: pending || 0,
+              name: c.name,
+              building_height: buildingHeight,
+              feature_id: featureId,
+              last_updated: now
+            };
+            // compute display using unified helper
+            computeDisplayForProps(circle.properties);
+
+          // 既存フィーチャーを更新、または新規追加
+          if (featureIndex >= 0 && featureIndex < peopleGeoJSON.features.length) {
+            // 既存グラフを更新（置き換え）
+            peopleGeoJSON.features[featureIndex] = circle;
+          } else {
+            // 新規グラフを追加（インデックスは既存数 + これまでに追加予定の数）
+            featureIndex = peopleGeoJSON.features.length + newFeatures.length;
+            featureIdMap.set(featureId, featureIndex);
+            newFeatures.push(circle);
+          }
+
+          // トップポイント
+          topPoints.push(turf.point([lng, lat], { count: c.count, pending_local: pending || 0, display_count: Number(circle.properties.display_count) || 0, display_height: Number(circle.properties.display_height) || 0, building_height: buildingHeight, name: c.name, feature_id: featureId }));
+        }
+
+        // 新規フィーチャーを既存フィーチャーに追加
+        peopleGeoJSON.features.push(...newFeatures);
+
+        // featureIdMap を再構築（インデックスが変わる場合に備えて）
+        featureIdMap.clear();
+        peopleGeoJSON.features.forEach((f, idx) => {
+          if (f.properties && f.properties.feature_id) {
+            featureIdMap.set(f.properties.feature_id, idx);
+          }
+        });
+
+        // マップに反映
+        const source = map.getSource('people');
+        if (source) source.setData(peopleGeoJSON);
+
+        // トップマーカーを更新
+        const topsSrc = map.getSource('people-tops');
+        if (topsSrc) topsSrc.setData(turf.featureCollection(topPoints));
+
+        // ランキングUIを更新
+        updateRankingUI();
+
+        lastFetchTime = now;
+      } catch (e) {
+        showError('データ取得に失敗しました: ' + e.message);
+      }
+    }
+
+    /**
+     * 投票データをAPIに送信
+     * - レート制限チェック
+     * - 成功後に即座にデータ更新
+     */
+    async function sendDataToAPI(name, lat, lng) {
+      // 投票ロック確認
+      if (isVoteLocked) {
+        showError('投票中です。しばらくお待ちください');
+        return;
+      }
+
+      // 同一店舗のレート制限チェック
+      const now = Date.now();
+      if (lastVoteTime[name] && (now - lastVoteTime[name] < VOTE_THROTTLE_MS)) {
+        showError('この店舗への投票はもうしばらく待ってください');
+        return;
+      }
+
+      // 座標の妥当性確認
+      if (typeof lat !== 'number' || typeof lng !== 'number' ||
+          lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        showError('無効な座標です');
+        return;
+      }
+
+      // 投票ロックを先に設定して二重送信/二重楽観更新を防ぐ
+      isVoteLocked = true;
+      // 楽観的UI更新（表示を即座に +1）
+      const optimisticFeatureId = optimisticIncrement(name, lat, lng);
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            name, 
+            lat, 
+            lng,
+            timestamp: now  // サーバ側の時刻検証用
+          })
+        });
+
+        if (!response.ok) {
+          if (response.status === 429) {
+            showError('投票が制限されています。しばらく後にお試しください');
+          } else if (response.status === 400) {
+            showError('無効なリクエストです');
+          } else if (response.status >= 500) {
+            showError('サーバーエラーが発生しました');
+          } else {
+            showError(`HTTP ${response.status}`);
+          }
+          // サーバーがエラーの場合は楽観的更新を取り消す
+          if (optimisticFeatureId) revertOptimisticIncrement(optimisticFeatureId);
+          return;
+        }
+
+        // 成功時: サーバ側で集計された値を取りに行く
+        lastVoteTime[name] = now;
+        // pending を1つ減らす（fetch側でも pending を参照するため両方で整合）
+        if (optimisticFeatureId) {
+          // decrement pending (integer-safe)
+          const prev = parseInt(pendingIncrements.get(optimisticFeatureId) || 0, 10) || 0;
+          const v = prev - 1;
+          if (v <= 0) pendingIncrements.delete(optimisticFeatureId);
+          else pendingIncrements.set(optimisticFeatureId, v);
+          // reflect pending decrease immediately in local feature if present
+          if (featureIdMap.has(optimisticFeatureId)) {
+            const idx = featureIdMap.get(optimisticFeatureId);
+            const f = peopleGeoJSON.features[idx];
+            if (f) {
+              if (v > 0) f.properties.pending_local = v;
+              else delete f.properties.pending_local;
+              computeDisplayForProps(f.properties);
+              const src = map.getSource('people'); if (src) src.setData(peopleGeoJSON);
+            }
+          }
+        }
+        await fetchAndUpdateData(true); // 即座にサーバ/表示を再取得して整合
+        showNotification();
+      } catch (e) {
+        showError('投票に失敗しました: ' + e.message);
+      } finally {
+        isVoteLocked = false;
+      }
+    }
+
+    /**
+     * 楽観的に表示を +1 する（ローカル保留として pendingIncrements に蓄える）
+     */
+    function optimisticIncrement(name, lat, lng) {
+      const lng4 = Number(lng).toFixed(4);
+      const lat4 = Number(lat).toFixed(4);
+      const featureId = `${name || 'unknown'}|${lng4}|${lat4}`;
+
+      // pending を +1（必ず整数 +1）
+      const prev = parseInt(pendingIncrements.get(featureId) || 0, 10) || 0;
+      const next = prev + 1;
+      pendingIncrements.set(featureId, next);
+
+      // 既存フィーチャーがあれば pending_local を更新して display を再計算
+      if (featureIdMap.has(featureId)) {
+        const idx = featureIdMap.get(featureId);
+        if (peopleGeoJSON.features[idx]) {
+          const f = peopleGeoJSON.features[idx];
+          //f.properties.pending_local = next;  // next に更新
+          const currentPending = parseInt(f.properties.pending_local || 0, 10) || 0;
+          f.properties.pending_local = currentPending + 1;
+          computeDisplayForProps(f.properties);  // display 再計算
+          f.properties.last_updated = Date.now();
+          const src = map.getSource('people'); if (src) src.setData(peopleGeoJSON);
+        }
+      } else {
+        // 無ければ新規フィーチャーを作成して追加（サーバの count は 0、pending_local = 1）
+        const radiusKm = 0.005;
+        const circle = turf.circle([lng, lat], radiusKm, { steps: 12, units: 'kilometers' });
+        circle.properties = { count: 0, pending_local: next, name: name, feature_id: featureId, last_updated: Date.now() };
+        computeDisplayForProps(circle.properties);  // display 計算
+        const newIndex = peopleGeoJSON.features.length;
+        peopleGeoJSON.features.push(circle);
+        featureIdMap.set(featureId, newIndex);
+        const src = map.getSource('people'); if (src) src.setData(peopleGeoJSON);
+      }
+
+      // トップマーカー更新（display_count/display_height は既に computeDisplayForProps で計算済み）
+      const tops = peopleGeoJSON.features.map(f => {
+        const cent = turf.centroid(f).geometry.coordinates;
+        return turf.point([cent[0], cent[1]], {
+          count: f.properties.count,
+          pending_local: f.properties.pending_local || 0,
+          display_count: Number(f.properties.display_count) || 0,
+          display_height: Number(f.properties.display_height) || 0,
+          name: f.properties.name,
+          feature_id: f.properties.feature_id
+        });
+      });
+      const topsSrc = map.getSource('people-tops'); if (topsSrc) topsSrc.setData(turf.featureCollection(tops));
+      return featureId;
+    }
+
+    /* ============================================================
+       イベントハンドラ
+       ============================================================ */
+    
+    map.on('load', () => {
+      addLayers();
+      fetchAndUpdateData(true);
+      
+      // Mapboxデフォルトの poi-label レイヤーを非表示にして、カスタムラベルのみ表示
+      try {
+        if (map.getLayer('poi-label')) {
+          map.setLayoutProperty('poi-label', 'visibility', 'none');
+        }
+      } catch (e) {
+        console.debug('poi-label レイヤーが見つかりません:', e);
+      }
+      
+      // テロップ自動消去
+      setTimeout(() => {
+        const banner = document.getElementById('info-banner');
+        if (banner) banner.style.opacity = '0';
+      }, 5000);
+
+      // ズーム変更時にLODを適用（レイヤー表示切り替え）
+      map.on('zoom', () => {
+        const currentZoom = map.getZoom();
+        if (map.getLayer('trend-bars-3d')) {
+          map.setLayoutProperty('trend-bars-3d', 'visibility', 
+            currentZoom >= MAP_CONFIG.lod.high ? 'visible' : 'none');
+        }
+        if (map.getLayer('trend-bars-2d')) {
+          map.setLayoutProperty('trend-bars-2d', 'visibility',
+            currentZoom < MAP_CONFIG.lod.high ? 'visible' : 'none');
+        }
+      });
+    });
+
+    /**
+     * クリックイベント: custom-poi-labelsレイヤーのみ対応
+     * 修正: poi-labelレイヤーへの参照を削除
+     * ポップアップを表示して詳細情報を確認してから投票
+     */
+    map.on('click', (e) => {
+      const features = map.queryRenderedFeatures(e.point, { 
+        layers: ['custom-poi-labels', 'trend-bars-3d', 'trend-bars-2d'] 
+      });
+
+      if (features.length > 0) {
+        const clickedFeature = features[0];
+        const name = clickedFeature.properties?.name || 
+                     clickedFeature.properties?.name_ja;
+        
+        if (!name) {
+          showError('店舗情報が見つかりません');
+          return;
+        }
+
+        // 座標の取得（複数のフォーマットに対応）
+        let coords;
+        if (clickedFeature.geometry.type === 'Point') {
+          coords = clickedFeature.geometry.coordinates;
+        } else if (clickedFeature.geometry.type === 'Polygon') {
+          // ポリゴン（Turf.circleが生成）の場合は中心を取得
+          coords = turf.centroid(clickedFeature).geometry.coordinates;
+        } else {
+          showError('座標形式が不正です');
+          return;
+        }
+
+        // まずビルのフィーチャを取得してハイライトを設定
+        try {
+          const bldFeatures = map.queryRenderedFeatures(e.point, { layers: ['3d-buildings'] });
+          if (bldFeatures && bldFeatures.length > 0) {
+            setSelectedBuilding(bldFeatures[0]);
+          } else {
+            // 建物が検出できない場合は、クリック座標付近に小さな円を出す
+            setSelectedHighlight(coords[1], coords[0]);
+          }
+        } catch (err) {
+          // 無視
+        }
+
+        // ポップアップを表示（投票選択肢付き）
+        showDetailPopup(e.lngLat, name, coords[1], coords[0]);
+      }
+    });
+
+    /* ============================================================
+       UI操作関数
+       ============================================================ */
+    
+    function setStyle(mode) {
+      const style = mode === 'night' 
+        ? 'mapbox://styles/mapbox/dark-v11' 
+        : 'mapbox://styles/mapbox/streets-v12';
+      map.setStyle(style);
+      
+      // スタイル変更後にレイヤーを再追加
+      map.once('style.load', () => {
+        addLayers();
+        // Mapboxデフォルトの poi-label レイヤーを非表示にする
+        try {
+          if (map.getLayer('poi-label')) {
+            map.setLayoutProperty('poi-label', 'visibility', 'none');
+          }
+        } catch (e) {
+          console.debug('poi-label レイヤーが見つかりません:', e);
+        }
+      });
+    }
+
+    function setView(mode) {
+      if (mode === 'top') {
+        map.flyTo({ 
+          pitch: 0, 
+          bearing: 0, 
+          zoom: 16,
+          duration: 1000 
+        });
+      } else {
+        map.flyTo({ 
+          pitch: MAP_CONFIG.defaultPitch, 
+          bearing: MAP_CONFIG.defaultBearing, 
+          zoom: MAP_CONFIG.defaultZoom,
+          duration: 1000 
+        });
+      }
+    }
+
+    function showNotification() {
+      const notif = document.getElementById('notification');
+      notif.style.opacity = '1';
+      setTimeout(() => { notif.style.opacity = '0'; }, 2000);
+    }
+
+    // ランキングUIを更新する
+    function updateRankingUI() {
+      const rankingList = document.getElementById('ranking-list');
+      if (!rankingList || !peopleGeoJSON || !peopleGeoJSON.features) return;
+
+      // 各フィーチャーから count を抽出し、上位5件を取得
+      const rankData = peopleGeoJSON.features
+        .map(feat => ({
+          name: feat.properties?.name || '不明な場所',
+          count: Number(feat.properties?.count) || 0,
+          coords: feat.geometry?.type === 'Point'
+            ? feat.geometry.coordinates
+            : feat.geometry?.type === 'Polygon'
+            ? turf.centroid(feat).geometry.coordinates
+            : null
+        }))
+        .filter(item => item.coords) // 座標がないものは除外
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5); // 上位5件
+
+      // HTMLを構築
+      if (rankData.length === 0) {
+        rankingList.innerHTML = `
+          <li class="ranking-item-skeleton">
+            <span class="ranking-rank">-</span>
+            <span class="ranking-name">データなし</span>
+            <span class="ranking-count">0</span>
+          </li>
+        `;
+        return;
+      }
+
+      rankingList.innerHTML = rankData.map((item, idx) => `
+        <li class="ranking-item" role="listitem" data-coords='${JSON.stringify(item.coords)}' onclick="onRankingItemClick(this)" style="cursor: pointer;">
+          <span class="ranking-rank">${idx + 1}</span>
+          <span class="ranking-name" title="${item.name}">${item.name}</span>
+          <span class="ranking-count">${item.count}票</span>
+        </li>
+      `).join('');
+    }
+
+    // ランキング項目をクリックしたときの処理
+    function onRankingItemClick(element) {
+      const coordStr = element.getAttribute('data-coords');
+      if (!coordStr) return;
+      try {
+        const coords = JSON.parse(coordStr);
+        const [lng, lat] = coords;
+        map.flyTo({
+          center: [lng, lat],
+          zoom: 17,
+          pitch: MAP_CONFIG.defaultPitch,
+          bearing: MAP_CONFIG.defaultBearing,
+          duration: 800
+        });
+      } catch (e) {
+        console.error('座標解析エラー:', e);
+      }
+    }
+
+    // ランキングパネルの最小化・展開をトグル
+    function toggleRankingPanel() {
+      const panel = document.getElementById('ranking-panel');
+      const btn = document.getElementById('ranking-toggle-btn');
+      if (!panel || !btn) return;
+
+      const isCollapsed = panel.classList.contains('ranking-panel-collapsed');
+      if (isCollapsed) {
+        // 展開状態に戻す
+        panel.classList.remove('ranking-panel-collapsed');
+        panel.classList.add('ranking-panel-expanded');
+        btn.innerHTML = '−';
+        btn.setAttribute('title', '最小化');
+        btn.setAttribute('aria-label', 'ランキングパネルを最小化');
+      } else {
+        // 最小化する（トロフィーアイコン表示）
+        panel.classList.remove('ranking-panel-expanded');
+        panel.classList.add('ranking-panel-collapsed');
+        btn.innerHTML = '🏆';
+        btn.setAttribute('title', '展開');
+        btn.setAttribute('aria-label', 'ランキングパネルを展開');
+      }
+    }
+
+    // 選択建物をハイライト表示する
+    function setSelectedBuilding(buildingFeature) {
+      if (!map.getSource('selected-building')) return;
+      // buildingFeature はレンダリング済みの feature（source: composite の building）
+      const feat = {
+        type: 'Feature',
+        geometry: buildingFeature.geometry,
+        properties: Object.assign({}, buildingFeature.properties)
+      };
+      // highlight_height を高めに設定して上方に表示
+      const bh = Number(feat.properties.height || feat.properties.min_height || 0) || 0;
+      feat.properties.highlight_height = bh + 6;
+
+      map.getSource('selected-building').setData({ type: 'FeatureCollection', features: [feat] });
+
+      // フラッシュする短い円ハイライトも表示
+      const center = turf.centroid(feat).geometry.coordinates;
+      setSelectedHighlight(center[1], center[0]);
+
+      // 3秒後に解除
+      setTimeout(() => {
+        if (map.getSource('selected-building')) map.getSource('selected-building').setData({ type: 'FeatureCollection', features: [] });
+      }, 3000);
+    }
+
+    // 座標に小さな円のハイライトを表示する（クリック時）
+    function setSelectedHighlight(lat, lng) {
+      if (!map.getSource('selected')) return;
+      const circle = turf.circle([lng, lat], 0.008, { steps: 16, units: 'kilometers' });
+      circle.properties = { count: 1 };
+      map.getSource('selected').setData({ type: 'FeatureCollection', features: [circle] });
+      setTimeout(() => {
+        if (map.getSource('selected')) map.getSource('selected').setData({ type: 'FeatureCollection', features: [] });
+      }, 2200);
+    }
+
+    // ページ離脱時のクリーンアップ
+    window.addEventListener('beforeunload', () => {
+      if (dataUpdateTimeout) clearTimeout(dataUpdateTimeout);
+    });
+
+    /**
+     * 詳細ポップアップを表示
+     * 店舗情報と投票ボタンを表示
+     */
+    // 約 1380～1410 行付近
+
+function showDetailPopup(lngLat, name, lat, lng) {
+  // 既存のポップアップを閉じる
+  if (popupOpen) {
+    popupOpen.remove();
+  }
+
+  const popupContent = document.createElement('div');
+  const title = document.createElement('div');
+  title.className = 'popup-title';
+  title.textContent = name || '';
+
+  const stat = document.createElement('div');
+  stat.className = 'popup-stat';
+  const label = document.createElement('span');
+  label.className = 'popup-stat-label';
+  label.textContent = '投票数';
+  const value = document.createElement('span');
+  value.className = 'popup-stat-value';
+
+  // 現在の表示数を取得
+  const lng4 = Number(lng).toFixed(4);
+  const lat4 = Number(lat).toFixed(4);
+  const featureId = `${name || 'unknown'}|${lng4}|${lat4}`;
+  let displayCount = 0;
+  if (featureIdMap.has(featureId)) {
+    const idx = featureIdMap.get(featureId);
+    const f = peopleGeoJSON.features[idx];
+    // display_count を直接参照（フォールバック計算なし）
+    displayCount = Number(f.properties.display_count) || 0;
+  }
+
+  // 1〜5は「5人未満」と表示
+  if (displayCount > 0 && displayCount <= 5) {
+    value.textContent = '5人未満';
+  } else {
+    value.textContent = String(displayCount || 0);
+  }
+
+  stat.appendChild(label);
+  stat.appendChild(value);
+
+  const action = document.createElement('div');
+  action.className = 'popup-action';
+  const btn = document.createElement('button');
+  btn.textContent = '投票する';
+  btn.addEventListener('click', async () => {
+    if (popupOpen) { popupOpen.remove(); popupOpen = null; }
+    await sendDataToAPI(name, lat, lng);
+  });
+  action.appendChild(btn);
+
+  popupContent.appendChild(title);
+  popupContent.appendChild(stat);
+  popupContent.appendChild(action);
+
+  popupOpen = new mapboxgl.Popup({ offset: 25, closeButton: true, closeOnClick: false })
+    .setLngLat(lngLat)
+    .setDOMContent(popupContent)
+    .addTo(map);
+}
+
+    /**
+     * HTML特殊文字をエスケープ（XSS対策）
+     */
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    /**
+     * ポップアップからの投票ボタンクリック
+     */
+
+     // TODO
+    window.handlePopupVote = async function(name, lat, lng) {
+      if (popupOpen) {
+        popupOpen.remove();
+        popupOpen = null;
+      }
+      await sendDataToAPI(name, lat, lng);
+    };
+  </script>
+</body>
+</html>

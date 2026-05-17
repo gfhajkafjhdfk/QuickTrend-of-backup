@@ -1,0 +1,4 @@
+node_modules
+.next
+ai-matching-app/node_modules
+ai-matching-app/.next
