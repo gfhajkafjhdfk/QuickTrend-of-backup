@@ -155,7 +155,7 @@
 }
 
 .panel-toggle-button {
-  position: absolute;
+  /* position: absolute; */
   top: 10px;
   left: 10px;
   width: 35px;
@@ -312,7 +312,7 @@
 
 .chat-form {
   margin-top: 1rem;
-  display: flex;
+  /* display: flex; */
   gap: 0.8rem;
 }
 
