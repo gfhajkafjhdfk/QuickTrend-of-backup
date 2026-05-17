@@ -17,9 +17,9 @@
   <body class="toback">
     <!-- 上部コントロールバー -->
     <div id="controlebar">
-        <div class="topbutton">
-      <a href="php/QuickTrend.php" class="toppage">トップページに戻る</a>
-      <a href="php/logout.php" class="backpage">ログアウト</a>
+      <div class="topbutton">
+        <a href="php/QuickTrend.php" class="toppage">トップページに戻る</a>
+        <a href="php/logout.php" class="backpage">ログアウト</a>
       </div>
       <h2>ジャンル一覧</h2>
       <div class="ticker-wrap">
@@ -168,7 +168,7 @@
         <h3 id="chatTitle">チャットルーム</h3>
 
         <!-- メッセージ表示 -->
-        <div id="messages" class="post-history">
+        <div style="position: relative">
           <button
             id="panelToggle"
             class="panel-toggle-button"
@@ -177,9 +177,11 @@
           >
             ＋
           </button>
-          メッセージを読み込み中...
-        </div>
 
+          <div id="messages" class="post-history">
+            メッセージを読み込み中...
+          </div>
+        </div>
         <!-- チャットフォーム -->
         <form id="chatForm" class="chat-form">
           <div class="form-group">
