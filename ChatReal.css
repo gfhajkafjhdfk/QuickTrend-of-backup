@@ -1,0 +1,333 @@
+/* ChatReal.html 専用スタイル */
+
+/* -------- ジャンル一覧専用スタイル -------- */
+#controlebar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+#controlebar h2 {
+  flex: 1 1 100%;
+  text-align: center;
+  margin: 0;
+  color: #1d4e89;
+}
+
+#genreListPage {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem 3rem;
+}
+
+#genreList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  max-width: 1200px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#genreList li {
+  margin: 0;
+}
+
+.genreButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 1.2rem 1.4rem;
+  color: #081b33;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(137, 192, 255, 0.96), rgba(92, 152, 234, 0.92));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 18px 38px rgba(0, 24, 75, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.24s ease, box-shadow 0.24s ease, background 0.24s ease;
+  text-align: left;
+  overflow: hidden;
+}
+
+.genreButton::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 24%), radial-gradient(circle at bottom right, rgba(173, 216, 255, 0.18), transparent 26%);
+  opacity: 0.95;
+  pointer-events: none;
+  transform: translate(-10%, -10%);
+}
+
+.genreButton:hover {
+  transform: translateY(-3px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), 0 26px 50px rgba(0, 18, 44, 0.32);
+  background: linear-gradient(145deg, rgba(181, 214, 255, 1), rgba(115, 169, 238, 0.98));
+}
+
+.genreButton:active {
+  transform: translateY(0);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 12px 24px rgba(0, 18, 44, 0.22);
+}
+
+.genreButton i {
+  font-size: 2rem;
+  min-width: 44px;
+  color: #cbe5ff;
+}
+
+.genreButton span {
+  flex: 1;
+}
+
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  background: black;
+  color: #42ff42;
+  padding: 10px 0;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.ticker {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: tickerMove 15s linear infinite;
+}
+
+@keyframes tickerMove {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+#messages p {
+  margin: 0;
+  color: #444;
+}
+
+.chat-textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: none;
+  transition: all 0.5s ease;
+}
+
+.chat-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.submit-button,
+#backButton,
+.attach-button {
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.panel-toggle-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: #2f71b2;
+  color: white;
+  z-index: 9999;
+}
+
+.panel-toggle-button:hover,
+.submit-button:hover,
+#backButton:hover,
+.attach-button:hover {
+  transform: translateY(-1px);
+}
+
+.chat-compose-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.chat-input-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.attach-button,
+.submit-button {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 4.4rem;
+}
+
+.attach-button {
+  padding: 0.9rem 1rem;
+  background: rgba(47, 113, 178, 0.14);
+  color: #1d4e89;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.attach-button i {
+  pointer-events: none;
+}
+
+.chat-textarea {
+  width: 100%;
+  min-height: 140px;
+  max-height: 240px;
+  resize: vertical;
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+}
+
+.input-field {
+  width: 100%;
+}
+
+.submit-button {
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #29c2e0, #1579d6);
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+#chatPage.expanded-input #messages {
+  height: 80px;
+}
+
+#chatPage.expanded-input .chat-textarea {
+  min-height: 300px;
+}
+
+#chatPage.expanded-input .chat-compose-row {
+  align-items: stretch;
+}
+
+.file-input {
+  display: none;
+}
+
+#backButton {
+  width: auto;
+  margin-bottom: 1rem;
+  padding: 0.85rem 1.5rem;
+  background: linear-gradient(135deg, #5d728f, #3f4f64);
+  color: white;
+}
+
+#backButton:hover {
+  transform: translateY(-1px);
+}
+
+.post-history {
+  margin-top: 1.5rem;
+}
+
+#messages li {
+  list-style: none;
+}
+
+#messages li strong {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+/* -------- パネル & チャット -------- */
+.panel {
+  max-width: 960px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  padding: 1.4rem;
+  box-shadow: 0 15px 36px rgba(23, 51, 102, 0.08);
+}
+
+#messages {
+  position: relative;
+  height: 50vh;
+  min-height: 320px;
+  padding: 50px 15px 15px 15px;
+  border: 1px solid #dfe6f0;
+  border-radius: 12px;
+  background: #fbfcff;
+  overflow-y: auto;
+  transition: all 0.5s ease;
+}
+
+.message {
+  margin-bottom: 0.9rem;
+}
+
+.message strong {
+  color: #26457f;
+}
+
+.message span {
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.chat-form {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.8rem;
+}
+
+.chat-form input {
+  flex: 1;
+  padding: 0.9rem;
+  border: 1px solid #c8d2e0;
+  border-radius: 10px;
+}
+
+.chat-form button {
+  padding: 0.9rem 1.3rem;
+  background: #2f71b2;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
