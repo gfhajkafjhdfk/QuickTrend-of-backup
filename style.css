@@ -734,6 +734,8 @@ body.auth-page a {
 }
 
 .feature-card {
+  position: relative;
+    z-index: 1;
   background: white;
   padding: 2rem;
   border-radius: 16px;
@@ -779,6 +781,8 @@ body.auth-page a {
 }
 
 .feature-text {
+  position: relative;
+    z-index: 10;
   color: #141313;
   line-height: 1.7;
   margin-bottom: 1.5rem;
