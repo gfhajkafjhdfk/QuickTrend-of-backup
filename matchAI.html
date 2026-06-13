@@ -8,13 +8,20 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-    <div class="page panel">
-        <nav><a href="php/QuickTrend.php">戻る</a><a href="php/logout.php">ログアウト</a></nav>
-        <h1>AIマッチング</h1>
-        <p>あなたの進捗と興味に合う候補をPython AIで判定します。</p>
-        <p>マッチングには数秒かかることがあります。しばらくお待ちください。</p>
-        <button id="runMatching">マッチングを実行する</button>
-        <div id="status" class="result"></div>
+    <div class="page">
+        <nav class="app-nav">
+            <a href="php/QuickTrend.php">← 戻る</a>
+            <a href="php/logout.php">ログアウト</a>
+        </nav>
+
+        <header>
+            <h1>AIマッチング</h1>
+            <p>あなたの進捗と興味に合う候補をPython AIで判定します。</p>
+            <p class="info">マッチングには数秒かかることがあります。しばらくお待ちください。</p>
+        </header>
+
+        <button id="runMatching" class="btn-auto">マッチングを実行する</button>
+        <div id="status" class="result" role="status"></div>
         <div id="candidates"></div>
     </div>
     <script src="js/matchAI.js"></script>

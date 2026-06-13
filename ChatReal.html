@@ -7,368 +7,224 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="ChatReal.css" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-
-    <!-- FontAwesome -->
     <script
       src="https://kit.fontawesome.com/12802bf766.js"
       crossorigin="anonymous"
     ></script>
   </head>
 
-  <body class="toback">
+  <body>
     <!-- 上部コントロールバー -->
-    <div id="controlebar">
-      <!-- <div class="topbutton"> -->
-      <a href="php/QuickTrend.php" class="toppage">トップページに戻る</a>
-      <a href="php/logout.php" class="backpage">ログアウト</a>
-      <!-- </div> -->
-     <h2><span class="animated-title">ジャンル一覧</span></h2>
+    <header id="controlebar">
+      <div class="controlebar-links">
+        <a href="php/QuickTrend.php" class="toppage">トップページに戻る</a>
+        <a href="php/logout.php" class="backpage">ログアウト</a>
+      </div>
+      <h2>ジャンル一覧</h2>
       <div class="ticker-wrap">
         <div class="ticker">
-          インフォメーション随時更新。次の目的地はワクワク!?ChatRealへようこそ!あなたのアイデアを共有しよう!
+          インフォメーション随時更新。次の目的地はワクワク!? ChatRealへようこそ! あなたのアイデアを共有しよう!
         </div>
       </div>
-    </div>
+    </header>
 
     <!-- ジャンル一覧 -->
-    <div id="genreListPage">
+    <main id="genreListPage">
       <ul id="genreList">
         <li>
-          <button
-            class="genreButton"
-            data-genre="クリエイトバザール"
-            data-tooltip="地域振興の為のアイデアを出し合いましょう！"
-          >
-            <i
-              class="fa-solid fa-comments-dollar"
-              style="color: #b8fb3c; font-size: 56px"
-            ></i>
+          <button class="genreButton" data-genre="クリエイトバザール" data-tooltip="地域振興の為のアイデアを出し合いましょう！">
+            <i class="fa-solid fa-comments-dollar"></i>
             <span>クリエイトバザール</span>
           </button>
         </li>
         <li>
-          <button
-            class="genreButton"
-            data-genre="つながリンク"
-            data-tooltip="町の人々と楽しめる交流イベントを計画しましょう！"
-          >
-            <i
-              class="fa-solid fa-comments"
-              style="color: #4fe38f; font-size: 56px"
-            ></i>
+          <button class="genreButton" data-genre="つながリンク" data-tooltip="町の人々と楽しめる交流イベントを計画しましょう！">
+            <i class="fa-solid fa-comments"></i>
             <span>つながリンク</span>
           </button>
         </li>
         <li>
-          <button
-            class="genreButton"
-            data-genre="トレンドスポット"
-            data-tooltip="若い世代にしかない発想で様々な催しを計画しましょう！"
-          >
-            <i
-              class="fa-solid fa-people-group"
-              style="color: #15e523; font-size: 56px"
-            ></i>
+          <button class="genreButton" data-genre="トレンドスポット" data-tooltip="若い世代にしかない発想で様々な催しを計画しましょう！">
+            <i class="fa-solid fa-people-group"></i>
             <span>トレンドスポット</span>
           </button>
         </li>
         <li>
-          <button
-            class="genreButton"
-            data-genre="わくわくワークショップ"
-            data-tooltip="社会奉仕のワークショップ等のアイデアを出しましょう！"
-          >
-            <i
-              class="fa-solid fa-place-of-worship"
-              style="color: #29c2e0; font-size: 56px"
-            ></i>
+          <button class="genreButton" data-genre="わくわくワークショップ" data-tooltip="社会奉仕のワークショップ等のアイデアを出しましょう！">
+            <i class="fa-solid fa-place-of-worship"></i>
             <span>わくわくワークショップ</span>
           </button>
         </li>
         <li>
-          <button
-            class="genreButton"
-            data-genre="ハッピーリビング"
-            data-tooltip="暮らしが楽しくなる家庭関連のアイデアを出しましょう！"
-          >
-            <i
-              class="fa-solid fa-people-roof"
-              style="color: #9ad5a4; font-size: 56px"
-            ></i>
+          <button class="genreButton" data-genre="ハッピーリビング" data-tooltip="暮らしが楽しくなる家庭関連のアイデアを出しましょう！">
+            <i class="fa-solid fa-people-roof"></i>
             <span>ハッピーリビング</span>
           </button>
         </li>
         <li>
-          <button
-            class="genreButton"
-            data-genre="政治経済"
-            data-tooltip="経済リテラシーや良い政治の案などを出しましょう！"
-          >
-            <i
-              class="fa-solid fa-landmark-dome"
-              style="color: #ffd43b; font-size: 56px"
-            ></i>
+          <button class="genreButton" data-genre="政治経済" data-tooltip="経済リテラシーや良い政治の案などを出しましょう！">
+            <i class="fa-solid fa-landmark-dome"></i>
             <span>政治経済</span>
           </button>
         </li>
         <li>
-          <button
-            class="genreButton"
-            data-genre="くらしのバリア"
-            data-tooltip="我々の住む町を住みやすくするにはどうしたらよいのか考えてみませんか？"
-          >
-            <i
-              class="fa-solid fa-helmet-safety"
-              style="color: #2cce47; font-size: 56px"
-            ></i>
+          <button class="genreButton" data-genre="くらしのバリア" data-tooltip="我々の住む町を住みやすくするにはどうしたらよいのか考えてみませんか？">
+            <i class="fa-solid fa-helmet-safety"></i>
             <span>くらしのバリア</span>
           </button>
         </li>
         <li>
-          <button
-            class="genreButton"
-            data-genre="LOVESPACE"
-            data-tooltip="町の人同士で今よりも愛で満ちた暮らしにしませんか？"
-          >
-            <i
-              class="fa-solid fa-face-grin-hearts"
-              style="color: #fbff14; font-size: 56px"
-            ></i>
+          <button class="genreButton" data-genre="LOVESPACE" data-tooltip="町の人同士で今よりも愛で満ちた暮らしにしませんか？">
+            <i class="fa-solid fa-face-grin-hearts"></i>
             <span>LOVESPACE</span>
           </button>
         </li>
         <li>
-          <button
-            class="genreButton"
-            data-genre="チャレンジステップ"
-            data-tooltip="町の人々とともに冒険をしてみませんか？"
-          >
-            <i
-              class="fa-brands fa-space-awesome"
-              style="color: #09d3cf; font-size: 56px"
-            ></i>
+          <button class="genreButton" data-genre="チャレンジステップ" data-tooltip="町の人々とともに冒険をしてみませんか？">
+            <i class="fa-brands fa-space-awesome"></i>
             <span>チャレンジステップ</span>
           </button>
         </li>
         <li>
-          <button
-            class="genreButton"
-            data-genre="CREATION"
-            data-tooltip="町の人々とともに創造的なアイディアを出し合いましょう！"
-          >
-            <i
-              class="fa-regular fa-lightbulb"
-              style="color: #e9e216; font-size: 56px"
-            ></i>
+          <button class="genreButton" data-genre="CREATION" data-tooltip="町の人々とともに創造的なアイディアを出し合いましょう！">
+            <i class="fa-regular fa-lightbulb"></i>
             <span>CREATION</span>
           </button>
         </li>
         <li>
-          <button
-            class="genreButton"
-            data-genre="リラックススペース"
-            data-tooltip="日々の疲れを癒せるようなアイディアを出し合いましょう！"
-          >
-            <i
-              class="fa-solid fa-couch"
-              style="color: #f38e1b; font-size: 56px"
-            ></i>
+          <button class="genreButton" data-genre="リラックススペース" data-tooltip="日々の疲れを癒せるようなアイディアを出し合いましょう！">
+            <i class="fa-solid fa-couch"></i>
             <span>リラックススペース</span>
           </button>
         </li>
         <li>
-          <button
-            class="genreButton"
-            data-genre="ミライソダテル"
-            data-tooltip="子供たちのためになるアイディアを出し合いましょう！"
-          >
-            <i
-              class="fa-solid fa-seedling"
-              style="color: #21e441; font-size: 56px"
-            ></i>
+          <button class="genreButton" data-genre="ミライソダテル" data-tooltip="子供たちのためになるアイディアを出し合いましょう！">
+            <i class="fa-solid fa-seedling"></i>
             <span>ミライソダテル</span>
           </button>
         </li>
       </ul>
-    </div>
-    <!-- チャット画面 -->
-    <div id="chatPage" style="display: none">
-      <div class="container">
-        <button id="backButton">前のページに戻る</button>
+    </main>
 
+    <!-- チャット画面 -->
+    <section id="chatPage" class="hidden">
+      <div class="container">
+        <button id="backButton" type="button">← ジャンル一覧に戻る</button>
         <h3 id="chatTitle">チャットルーム</h3>
 
-        <!-- メッセージ表示 -->
-        <div style="position: relative">
-          <button
-            id="panelToggle"
-            class="panel-toggle-button"
-            type="button"
-            title="ログを展開/縮小"
-          >
-            ＋
-          </button>
-
-          <div id="messages" class="post-history">
-            メッセージを読み込み中...
-          </div>
+        <div class="messages-wrapper">
+          <button id="panelToggle" class="panel-toggle-button" type="button" title="入力欄を拡大">＋</button>
+          <div id="messages" class="post-history">メッセージを読み込み中...</div>
         </div>
-        <!-- チャットフォーム -->
+
         <form id="chatForm" class="chat-form">
           <div class="form-group">
             <label for="message">メッセージ</label>
-            <textarea
-              id="message"
-              class="chat-textarea"
-              placeholder="メッセージを入力..."
-              required
-            ></textarea>
+            <div class="chat-compose-row">
+              <textarea id="message" class="chat-textarea" placeholder="メッセージを入力..." required></textarea>
+              <button type="button" id="attachButton" class="attach-button" title="ファイルを添付">
+                <i class="fa-solid fa-paperclip"></i>
+              </button>
+              <button type="submit" class="submit-button">送信</button>
+            </div>
           </div>
-          <button type="button" id="attachButton" class="attach-button">
-            <i class="fa-solid fa-paperclip"></i>
-          </button>
-
           <input type="file" id="fileInput" class="file-input" />
-
-          <button type="submit" class="submit-button">送信</button>
         </form>
       </div>
-    </div>
+    </section>
 
     <script>
-      let currentGenre = "";
+      var currentGenre = "";
 
-      // ジャンル選択
-      document.querySelectorAll(".genreButton").forEach((button) => {
+      // ジャンルボタン → チャット画面へ切り替え
+      document.querySelectorAll(".genreButton").forEach(function (button) {
         button.addEventListener("click", function () {
           currentGenre = this.dataset.genre;
-
-          document.getElementById("chatTitle").textContent =
-            currentGenre + " のチャット";
-
-          document.getElementById("genreListPage").style.display = "none";
-          document.getElementById("controlebar").style.display = "none";
-
-          document.getElementById("chatPage").style.display = "block";
-
+          document.getElementById("chatTitle").textContent = currentGenre + " のチャット";
+          document.getElementById("genreListPage").classList.add("hidden");
+          document.getElementById("controlebar").classList.add("hidden");
+          document.getElementById("chatPage").classList.remove("hidden");
           loadMessages();
         });
       });
 
-      // 戻るボタン
-      document
-        .getElementById("backButton")
-        .addEventListener("click", function () {
-          document.getElementById("chatPage").style.display = "none";
+      // ジャンル一覧に戻る
+      document.getElementById("backButton").addEventListener("click", function () {
+        document.getElementById("chatPage").classList.add("hidden");
+        document.getElementById("genreListPage").classList.remove("hidden");
+        document.getElementById("controlebar").classList.remove("hidden");
+      });
 
-          document.getElementById("genreListPage").style.display = "flex";
-
-          document.getElementById("controlebar").style.display = "block";
-        });
-
-      // メッセージ読み込み
+      // メッセージをサーバーから取得
       async function loadMessages() {
         try {
-          const response = await fetch(
-            "php/chat_get.php?genre=" + encodeURIComponent(currentGenre),
+          var response = await fetch(
+            "php/chat_get.php?genre=" + encodeURIComponent(currentGenre)
           );
-
-          const data = await response.json();
-
-          const container = document.getElementById("messages");
+          var data = await response.json();
+          var container = document.getElementById("messages");
 
           if (!data.messages || data.messages.length === 0) {
-            container.innerHTML =
-              '<p style="text-align:center;">まだメッセージはありません</p>';
-
+            container.innerHTML = '<p>まだメッセージはありません</p>';
             return;
           }
 
           container.innerHTML = data.messages
-            .map(
-              (msg) => `
-
-                    <div id="postList">
-                        <li>
-                            <strong>${msg.user_name}</strong>
-                            <span>${msg.message}</span><br>
-                            <small>${msg.created_at}</small>
-                        </li>
-                    </div>
-
-                `,
-            )
+            .map(function (msg) {
+              return (
+                '<li><strong>' + msg.user_name + '</strong>' +
+                '<span>' + msg.message + '</span>' +
+                '<small>' + msg.created_at + '</small></li>'
+              );
+            })
             .join("");
         } catch (error) {
-          document.getElementById("messages").innerHTML =
-            "メッセージの取得に失敗しました";
-
+          document.getElementById("messages").textContent = "メッセージの取得に失敗しました";
           console.error(error);
         }
       }
 
-      // 投稿処理
-      document
-        .getElementById("chatForm")
-        .addEventListener("submit", async function (event) {
-          event.preventDefault();
+      // メッセージ送信
+      document.getElementById("chatForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        var message = document.getElementById("message").value.trim();
+        if (!message) return;
 
-          const message = document.getElementById("message").value.trim();
+        try {
+          await fetch("php/chat_post.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ message: message, genre: currentGenre }),
+          });
+          document.getElementById("message").value = "";
+          await loadMessages();
+        } catch (error) {
+          console.error(error);
+        }
+      });
 
-          if (!message) return;
+      // ファイル添付（UIのみ）
+      document.getElementById("attachButton").addEventListener("click", function () {
+        document.getElementById("fileInput").click();
+      });
 
-          try {
-            await fetch("php/chat_post.php", {
-              method: "POST",
+      document.getElementById("fileInput").addEventListener("change", function (event) {
+        if (event.target.files.length > 0) {
+          alert("添付ファイル: " + event.target.files[0].name);
+        }
+      });
 
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-              },
+      // 入力欄の拡大トグル
+      document.getElementById("panelToggle").addEventListener("click", function (e) {
+        e.preventDefault();
+        var chatPage = document.getElementById("chatPage");
+        var expanded = chatPage.classList.toggle("expanded-input");
+        this.textContent = expanded ? "−" : "＋";
+      });
 
-              body: new URLSearchParams({
-                message: message,
-                genre: currentGenre,
-              }),
-            });
-
-            document.getElementById("message").value = "";
-
-            await loadMessages();
-          } catch (error) {
-            console.error(error);
-          }
-        });
-
-      // 送信に向けた添付ボタン
-      document
-        .getElementById("attachButton")
-        .addEventListener("click", function () {
-          document.getElementById("fileInput").click();
-        });
-
-      document
-        .getElementById("fileInput")
-        .addEventListener("change", function (event) {
-          if (event.target.files.length > 0) {
-            const fileName = event.target.files[0].name;
-            alert("添付ファイル: " + fileName);
-          }
-        });
-
-      // 入力拡大 / ログ縮小トグル
-      document
-        .getElementById("panelToggle")
-        .addEventListener("click", function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          const chatPage = document.getElementById("chatPage");
-          const expanded = chatPage.classList.toggle("expanded-input");
-          this.textContent = expanded ? "−" : "＋";
-        });
-
-      // 5秒ごと更新
-      setInterval(() => {
-        if (document.getElementById("chatPage").style.display === "block") {
+      // チャット表示中は5秒ごとに更新
+      setInterval(function () {
+        if (!document.getElementById("chatPage").classList.contains("hidden")) {
           loadMessages();
         }
       }, 5000);

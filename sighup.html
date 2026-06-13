@@ -7,23 +7,31 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
-<body>
-    <div class="box">
+<body class="auth-page">
+    <main class="box">
         <h1>新規登録</h1>
         <form method="post" action="php/register.php">
-            <label>ニックネーム<input type="text" name="name" required></label>
-            <label>メールアドレス<input type="email" name="email" required></label>
-            <label>パスワード<input type="password" name="password" required></label>
-            <label>得意ジャンル<select name="genre" required>
-                <option value="music">音楽</option>
-                <option value="travel">旅行</option>
-                <option value="food">グルメ</option>
-                <option value="movie">映画</option>
-                <option value="sports">スポーツ</option>
-            </select></label>
+            <label for="name">ニックネーム
+                <input type="text" id="name" name="name" required autocomplete="nickname">
+            </label>
+            <label for="email">メールアドレス
+                <input type="email" id="email" name="email" required autocomplete="email">
+            </label>
+            <label for="password">パスワード
+                <input type="password" id="password" name="password" required autocomplete="new-password">
+            </label>
+            <label for="genre">得意ジャンル
+                <select id="genre" name="genre" required>
+                    <option value="music">音楽</option>
+                    <option value="travel">旅行</option>
+                    <option value="food">グルメ</option>
+                    <option value="movie">映画</option>
+                    <option value="sports">スポーツ</option>
+                </select>
+            </label>
             <button type="submit">登録する</button>
         </form>
         <a href="sighin.html">すでにアカウントをお持ちの方はこちら</a>
-    </div>
+    </main>
 </body>
 </html>
