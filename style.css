@@ -410,66 +410,125 @@ body.home-page .navbar-nav .btn-outline:hover {
   color: var(--color-text);
 }
 
-/* Hero */
-.hero {
-  padding: var(--space-3xl) 0;
-  background: linear-gradient(180deg, #fff 0%, var(--color-bg) 100%);
-}
+/* ========================================================
+   Hero（ここを丸ごと書き換えて差し替えます）
+   ======================================================== */
 
-.hero .container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-2xl);
-  align-items: center;
-}
-
-.hero-content {
-  position: absolute;
-  top: 50%;           /* 上から50%の位置 */
-  left: 50%;          /* 左から50%の位置 */
-  transform: translate(-50%, -50%); /* 完全に中央へ寄せる */
+   .hero {
+    padding: 0;          /* 余白をゼロにして画像を表示 */
+    background: #0f172a; /* 画像が読み込まれる前の背景色（濃い紺） */
+    width: 100%;
+  }
   
-  text-align: center; /* 文字を中央揃えに */
-  color: #ffffff;     /* 画像の上で見やすいように白文字にする */
-  width: 90%;         /* スマホなどで横幅がいっぱいにならないよう制限 */
-  max-width: 800px;
-  z-index: 10;        /* 確実に画像より前に出す */
-}
-
-.hero-content h1 {
-  font-size: var(--font-size-4xl);
-  letter-spacing: -0.02em;
-  margin-bottom: var(--space-md);
-}
-
-.hero-badge {
-  display: inline-block;
-  background: var(--color-primary-light);
-  color: var(--color-primary);
-  padding: var(--space-xs) var(--space-md);
-  border-radius: var(--radius-full);
-  margin-bottom: var(--space-lg);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-}
-
-.hero-description {
-  font-size: var(--font-size-lg);
-  margin-bottom: var(--space-xl);
-  color: var(--color-text-muted);
-}
-
-.hero-description .highlight-text {
-  color: var(--color-primary);
-  font-weight: 600;
-}
-
-.hero-buttons {
-  display: flex;
-  gap: var(--space-md);
-  flex-wrap: wrap;
-}
-
+  /* 親要素：画像と文字を重ねる基準（高さは画面基準で自動調整） */
+  .hero .container {
+    display: block;      /* gridを解除 */
+    position: relative;
+    max-width: 100%;     /* 横幅いっぱいに広げる */
+    padding: 0;          /* 左右の余白をなくす */
+    height: 60vh;        /* 画面の高さの60%にする（自動調整の肝） */
+    min-height: 450px;   /* スマホでも潰れすぎない最低の高さ */
+    overflow: hidden;
+  }
+  
+  /* 画像エリア：コンテナいっぱいに広げる */
+  .hero-image {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* 画像本体：画面幅に合わせて自動で縮小・中央切り抜き */
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;   /* 画像の比率を保ったままエリアを埋める */
+  }
+  
+  /* 文字要素：画像の上に完全に重ねて中央配置 */
+  .hero-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 画面中央に固定 */
+    
+    width: 90%;         /* 横幅は画面の90%（スマホ対応） */
+    max-width: 600px;   /* パソコンで広がりすぎない制限 */
+    text-align: center; /* 文字を中央揃え */
+    z-index: 10;
+    
+    /* 画像の上でも文字が見やすくなるように、薄い黒背景を入れる */
+    background: rgba(15, 23, 42, 0.7); 
+    padding: var(--space-xl);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(4px); /* 背景画像を少しぼかして文字を際立たせる */
+  }
+  
+  /* タイトル文字（画像の上で見やすく白に変更） */
+  .hero-content h1 {
+    color: #ffffff;
+    font-size: var(--font-size-3xl);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-sm);
+  }
+  
+  /* バッジの調整 */
+  .hero-badge {
+    display: inline-block;
+    background: var(--color-primary);
+    color: #ffffff;
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-full);
+    margin-bottom: var(--space-md);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+  }
+  
+  /* 説明文（画像の上で見やすく明るいグレーに変更） */
+  .hero-description {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-lg);
+    color: #e2e8f0;
+  }
+  
+  /* 強調文字の色変更 */
+  .hero-description .highlight-text {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+  
+  /* ボタンエリア：スマホでは縦、PCでは横並び */
+  .hero-buttons {
+    display: flex;
+    flex-direction: column; /* 基本はスマホ用の縦並び */
+    gap: var(--space-sm);
+    align-items: center;
+  }
+  
+  .hero-buttons .btn {
+    width: 100%; /* スマホではボタンを横幅いっぱいに */
+    margin-top: 0;
+  }
+  
+  /* 画面幅がタブレット・PCサイズ（768px以上）になったときの自動調整 */
+  @media (min-width: 768px) {
+    .hero .container {
+      height: 70vh; /* PCでは少し高さを出す */
+    }
+    
+    .hero-content h1 {
+      font-size: var(--font-size-4xl); /* タイトルを大きく */
+    }
+    
+    .hero-buttons {
+      flex-direction: row; /* 横並びにする */
+      justify-content: center;
+    }
+    
+    .hero-buttons .btn {
+      width: auto; /* ボタンを適切なサイズに */
+    }
+  }
+  
 .hero-img {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
