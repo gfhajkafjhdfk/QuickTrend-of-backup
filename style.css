@@ -456,7 +456,12 @@ body.home-page .navbar-nav .btn-outline:hover {
   flex-wrap: wrap;
 }
 
+.hero-image{
+  position: relative;/*追加*/
+}
+
 .hero-img {
+  position: absolute;/*追加*/
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
 }
