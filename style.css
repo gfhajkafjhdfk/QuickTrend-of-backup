@@ -103,6 +103,7 @@ img {
 
 /* -------- Layout -------- */
 .container {
+  position: relative;
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 var(--space-lg);
@@ -422,6 +423,19 @@ body.home-page .navbar-nav .btn-outline:hover {
   align-items: center;
 }
 
+.hero-content {
+  position: absolute;
+  top: 50%;           /* 上から50%の位置 */
+  left: 50%;          /* 左から50%の位置 */
+  transform: translate(-50%, -50%); /* 完全に中央へ寄せる */
+  
+  text-align: center; /* 文字を中央揃えに */
+  color: #ffffff;     /* 画像の上で見やすいように白文字にする */
+  width: 90%;         /* スマホなどで横幅がいっぱいにならないよう制限 */
+  max-width: 800px;
+  z-index: 10;        /* 確実に画像より前に出す */
+}
+
 .hero-content h1 {
   font-size: var(--font-size-4xl);
   letter-spacing: -0.02em;
@@ -456,12 +470,7 @@ body.home-page .navbar-nav .btn-outline:hover {
   flex-wrap: wrap;
 }
 
-.hero-image{
-  position: relative;/*追加*/
-}
-
 .hero-img {
-  position: absolute;/*追加*/
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
 }
