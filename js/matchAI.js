@@ -12,9 +12,12 @@ document.getElementById('runMatching').addEventListener('click', async function 
         var listRes = await fetch('php/get_matching_candidates.php');
         var candidateData = await listRes.json();
 
+        var tokenRes = await fetch('php/csrf_token.php');
+        var tokenData = await tokenRes.json();
+
         var predictRes = await fetch('php/ai/predict.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': tokenData.token },
             body: JSON.stringify({
                 user: { genre: progressData.genre, progress: progressData.progress },
                 candidates: candidateData.candidates

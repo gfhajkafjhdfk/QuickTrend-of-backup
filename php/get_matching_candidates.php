@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/session_boot.php';
 if (empty($_SESSION['user_id'])) {
     http_response_code(403);
     echo json_encode(['error' => 'ログインが必要です']);

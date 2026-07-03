@@ -10,6 +10,7 @@
 <body class="auth-page">
     <main class="box">
         <h1>ログイン</h1>
+        <p id="authMessage" class="error" hidden></p>
         <form method="post" action="php/login.php">
             <label for="email">メールアドレス
                 <input type="email" id="email" name="email" required autocomplete="email">
@@ -21,5 +22,32 @@
         </form>
         <a href="sighup.html">アカウントをお持ちでない方はこちら</a>
     </main>
+    <script>
+    (function () {
+        // クエリ文字列のコードを固定文言に変換して表示する（文字列をそのまま出さないためXSSの心配なし）
+        var messages = {
+            login_required: 'ログインをしてください。',
+            session_expired: 'ログインの有効期限が切れました。ログインをしてください。',
+            login_failed: 'メールアドレスまたはパスワードが正しくありません。ログインをしてください。',
+            invalid_request: '不正なリクエストです。もう一度ログインをしてください。'
+        };
+        var msg = new URLSearchParams(location.search).get('msg');
+        if (msg && messages[msg]) {
+            var el = document.getElementById('authMessage');
+            el.textContent = messages[msg];
+            el.hidden = false;
+        }
+        // CSRFトークンを取得してフォームに埋め込む
+        fetch('php/csrf_token.php')
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'csrf_token';
+                input.value = data.token;
+                document.querySelector('form').appendChild(input);
+            });
+    })();
+    </script>
 </body>
 </html>

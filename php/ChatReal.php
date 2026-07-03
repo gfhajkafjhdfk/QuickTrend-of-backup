@@ -1,9 +1,5 @@
 <?php
-session_start();
-if (empty($_SESSION['user_id'])) {
-    header('Location: sighin.html');
-    exit;
-}
+require_once __DIR__ . '/auth_check.php';
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -35,6 +31,7 @@ if (empty($_SESSION['user_id'])) {
         </form>
     </div>
     <script>
+        const CSRF_TOKEN = '<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>';
         async function loadMessages() {
             const response = await fetch('chat_get.php');
             const data = await response.json();
@@ -50,7 +47,7 @@ if (empty($_SESSION['user_id'])) {
             await fetch('chat_post.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ message })
+                body: new URLSearchParams({ message, csrf_token: CSRF_TOKEN })
             });
             document.getElementById('message').value = '';
             await loadMessages();

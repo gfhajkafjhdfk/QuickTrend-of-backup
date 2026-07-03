@@ -1,9 +1,5 @@
 <?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: sighin.html');
-    exit;
-}
+require_once __DIR__ . '/auth_check.php';
 $name = htmlspecialchars($_SESSION['user_name'] ?? 'ゲスト', ENT_QUOTES, 'UTF-8');
 $genre = htmlspecialchars($_SESSION['user_genre'] ?? 'unknown', ENT_QUOTES, 'UTF-8');
 ?>
