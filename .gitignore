@@ -1,4 +1,5 @@
 node_modules
 .next
+php/config.local.php
 ai-matching-app/node_modules
 ai-matching-app/.next

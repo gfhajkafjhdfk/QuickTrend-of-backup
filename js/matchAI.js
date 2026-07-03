@@ -32,15 +32,19 @@ document.getElementById('runMatching').addEventListener('click', async function 
             return;
         }
 
-        candidatesEl.innerHTML = result.matches.map(function (item) {
-            return (
-                '<div class="candidate">' +
-                '<h3>' + item.name + '</h3>' +
-                '<p>ジャンル: ' + item.genre + '</p>' +
-                '<p>スコア: ' + item.score + '</p>' +
-                '</div>'
-            );
-        }).join('');
+        // DBの値をtextContentで挿入することでXSSを防ぐ（innerHTMLは使わない）
+        candidatesEl.replaceChildren.apply(candidatesEl, result.matches.map(function (item) {
+            var card = document.createElement('div');
+            card.className = 'candidate';
+            var name = document.createElement('h3');
+            name.textContent = item.name;
+            var genre = document.createElement('p');
+            genre.textContent = 'ジャンル: ' + item.genre;
+            var score = document.createElement('p');
+            score.textContent = 'スコア: ' + item.score;
+            card.append(name, genre, score);
+            return card;
+        }));
     } catch (error) {
         statusEl.textContent = 'エラーが発生しました。リロードしてください。';
         console.error(error);

@@ -1,0 +1,8 @@
+<?php
+// このファイルを config.local.php にコピーして実際の値を記入する（config.local.phpはgit管理外）
+return [
+    'host' => '127.0.0.1',
+    'dbname' => 'quicktrend',
+    'user' => 'quicktrend_app',// rootではなく専用ユーザを作ること
+    'password' => 'ここに強いパスワード',
+];

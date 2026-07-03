@@ -1,8 +1,15 @@
 <?php
-return [
-    'host' => '127.0.0.1',//これはサーバによって変更する必要があります
-    'dbname' => 'quicktrend',//データベース名
-    'user' => 'root',//権限のあるユーザを指定する必要がある（これから設定する）
-    'password' => '',//パスワードを指定する必要がある（これから設定する）
-    'charset' => 'utf8mb4',//文字コード
+// DB接続設定。優先順位: 環境変数 > config.local.php（git管理外） > デフォルト値
+// 本番（VPS）では環境変数を設定するか、config.local.php.example を参考に config.local.php を作成する
+$config = [
+    'host' => getenv('QT_DB_HOST') ?: '127.0.0.1',
+    'dbname' => getenv('QT_DB_NAME') ?: 'quicktrend',
+    'user' => getenv('QT_DB_USER') ?: 'root',
+    'password' => getenv('QT_DB_PASSWORD') ?: '',
+    'charset' => 'utf8mb4',
 ];
+$localFile = __DIR__ . '/config.local.php';
+if (is_file($localFile)) {
+    $config = array_merge($config, require $localFile);
+}
+return $config;

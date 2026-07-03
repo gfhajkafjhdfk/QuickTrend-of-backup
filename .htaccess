@@ -1,0 +1,36 @@
+# QuickTrend セキュリティ設定（Apache / XAMPP対応）
+
+<IfModule mod_headers.c>
+    # MIMEタイプの推測を禁止
+    Header always set X-Content-Type-Options "nosniff"
+    # クリックジャッキング対策
+    Header always set X-Frame-Options "SAMEORIGIN"
+    # リファラの送信を制限
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    # Content-Security-Policy:
+    # Map.htmlにインラインスクリプトが残っているため script-src に 'unsafe-inline' を暫定許可。
+    # 全ページのJSを外部ファイル化できたら 'unsafe-inline' を外すこと。
+    Header always set Content-Security-Policy "default-src 'self'; \
+script-src 'self' 'unsafe-inline' https://api.mapbox.com https://cdn.jsdelivr.net; \
+style-src 'self' 'unsafe-inline' https://api.mapbox.com https://cdnjs.cloudflare.com; \
+font-src 'self' https://cdnjs.cloudflare.com data:; \
+img-src 'self' data: blob:; \
+connect-src 'self' https://api.mapbox.com https://events.mapbox.com; \
+worker-src 'self' blob:; \
+object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'"
+
+    # ===== VPSでHTTPS化したら以下のコメントを外す =====
+    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# ===== VPSでHTTPS化したら以下のコメントを外す（HTTP→HTTPSリダイレクト） =====
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteCond %{HTTPS} !=on
+#     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+# </IfModule>
+
+# 設定ファイル・SQLへの直接アクセスを禁止
+<FilesMatch "\.(sql|md|local\.php|example)$">
+    Require all denied
+</FilesMatch>

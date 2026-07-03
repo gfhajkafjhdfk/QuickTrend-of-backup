@@ -17,6 +17,11 @@ if (!$name || !$email || !$password || !$genre) {
     header('Location: ../sighup.html?msg=signup_failed');
     exit;
 }
+// パスワードポリシー: 8文字以上かつ英字と数字を両方含む
+if (strlen($password) < 8 || !preg_match('/[A-Za-z]/', $password) || !preg_match('/[0-9]/', $password)) {
+    header('Location: ../sighup.html?msg=weak_password');
+    exit;
+}
 $stmt = $pdo->prepare('SELECT id FROM users WHERE email = :email');
 $stmt->execute(['email' => $email]);
 if ($stmt->fetch()) {

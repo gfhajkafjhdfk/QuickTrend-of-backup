@@ -18,8 +18,10 @@
             <label for="email">メールアドレス
                 <input type="email" id="email" name="email" required autocomplete="email">
             </label>
-            <label for="password">パスワード
-                <input type="password" id="password" name="password" required autocomplete="new-password">
+            <label for="password">パスワード（8文字以上・英字と数字を含む）
+                <input type="password" id="password" name="password" required autocomplete="new-password"
+                       minlength="8" pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,}"
+                       title="8文字以上で、英字と数字を両方含めてください">
             </label>
             <label for="genre">得意ジャンル
                 <select id="genre" name="genre" required>
@@ -39,6 +41,7 @@
         // クエリ文字列のコードを固定文言に変換して表示する（文字列をそのまま出さないためXSSの心配なし）
         var messages = {
             signup_failed: '入力内容に不備があります。もう一度入力してください。',
+            weak_password: 'パスワードは8文字以上で、英字と数字を両方含めてください。',
             email_taken: 'このメールアドレスは既に登録されています。',
             invalid_request: '不正なリクエストです。もう一度入力してください。'
         };

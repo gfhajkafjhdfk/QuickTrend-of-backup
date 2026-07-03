@@ -176,28 +176,5 @@
     </footer>
 
     <script src="js/main.js"></script>
-    <script>
-        // ローディング画面を3秒後に非表示
-        window.addEventListener('DOMContentLoaded', function () {
-            setTimeout(function () {
-                document.getElementById('loading-screen').classList.add('hidden');
-                document.getElementById('termsPage').classList.remove('hidden');
-            }, 3000);
-
-            // 機能カードのフェードイン
-            var cards = document.querySelectorAll('.feature-card');
-            var observer = new IntersectionObserver(function (entries) {
-                entries.forEach(function (entry) {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('fade-in');
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            cards.forEach(function (card) {
-                observer.observe(card);
-            });
-        });
-    </script>
 </body>
 </html>

@@ -203,7 +203,8 @@ button,
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  width: 100%;
+  /* 全幅はデフォルトにしない（レイアウト崩れの原因）。全幅が必要な場所で個別指定する */
+  width: auto;
   padding: 0.8rem var(--space-lg);
   margin-top: var(--space-md);
   border: none;
@@ -228,6 +229,12 @@ button:hover,
 button:active,
 .btn:active {
   transform: scale(0.98);
+}
+
+/* 認証フォーム（ログイン/新規登録）内の送信ボタンは全幅にする */
+.box button,
+.box .btn {
+  width: 100%;
 }
 
 .btn-primary {
