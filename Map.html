@@ -15,8 +15,7 @@
   <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" type="text/css" />
 
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
-
-  <script src="map.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 </head>
 
 <body class="map-page">
@@ -84,7 +83,14 @@
       }
     };
 
-    const API_URL = 'api.php';
+    const API_URL = 'php/api.php';// 旧: 'api.php'（ルート直下に実ファイルが無く404だったのを修正）
+
+    // CSRFトークン（投票・訪問記録のPOSTに必須）
+    window.QT_CSRF = '';
+    fetch('php/csrf_token.php')
+      .then(r => r.json())
+      .then(d => { window.QT_CSRF = d.token; })
+      .catch(() => {});
     
     /* ============================================================
        不正投票対策：クライアント側レート制限
@@ -637,10 +643,10 @@
       try {
         const response = await fetch(API_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            name, 
-            lat, 
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': window.QT_CSRF },
+          body: JSON.stringify({
+            name,
+            lat,
             lng,
             timestamp: now  // サーバ側の時刻検証用
           })
@@ -1094,5 +1100,11 @@ function showDetailPopup(lngLat, name, lat, lng) {
       await sendDataToAPI(name, lat, lng);
     };
   </script>
+
+  <!-- 追加機能モジュール（既存スクリプトのmap/geocoder/showDetailPopupを参照するため、この位置で読み込む） -->
+  <script src="js/map/visit-tracker.js"></script>
+  <script src="js/map/zoom-lod.js"></script>
+  <script src="js/map/panels.js"></script>
+  <script src="js/map/ticker.js"></script>
 </body>
 </html>
