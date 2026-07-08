@@ -99,7 +99,8 @@
 #genreListPage {
   display: flex;
   justify-content: center;
-  padding: var(--space-xl) var(--space-md) var(--space-2xl);
+  padding: 3.5rem var(--space-md) var(--space-2xl);
+  align-items: flex-start;
 }
 
 #genreList {
@@ -132,6 +133,8 @@
   font-weight: 600;
   cursor: pointer;
   text-align: left;
+  position: relative;
+  overflow: visible;
   transition: transform var(--transition), box-shadow var(--transition),
     border-color var(--transition);
 }
@@ -162,10 +165,10 @@
   content: attr(data-tooltip);
   position: absolute;
   left: 50%;
-  bottom: calc(100% + 8px);
+  top: calc(100% + 10px);
   transform: translateX(-50%);
   width: max-content;
-  max-width: 220px;
+  max-width: 240px;
   padding: var(--space-sm) var(--space-md);
   color: #fff;
   background: var(--color-nav-bg);
@@ -178,11 +181,7 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--transition);
-  z-index: 10;
-}
-
-.genreButton {
-  position: relative;
+  z-index: 20;
 }
 
 .genreButton:hover::after {
