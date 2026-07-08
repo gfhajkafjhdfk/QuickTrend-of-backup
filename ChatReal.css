@@ -99,7 +99,7 @@
 #genreListPage {
   display: flex;
   justify-content: center;
-  padding: 3.5rem var(--space-md) var(--space-2xl);
+  padding: 4.5rem var(--space-md) var(--space-2xl);
   align-items: flex-start;
 }
 
@@ -165,10 +165,10 @@
   content: attr(data-tooltip);
   position: absolute;
   left: 50%;
-  top: calc(100% + 10px);
+  top: calc(100% + 12px);
   transform: translateX(-50%);
   width: max-content;
-  max-width: 240px;
+  max-width: 280px;
   padding: var(--space-sm) var(--space-md);
   color: #fff;
   background: var(--color-nav-bg);
