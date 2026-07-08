@@ -125,8 +125,7 @@
   padding: var(--space-lg);
   color: var(--color-text);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: blanchedalmond;
+  border-radius: var(--radius-md);background:linear-gradient(180deg, #ffffff, #fafcff);
   box-shadow: var(--shadow-sm);
   font-size: var(--font-size-base);
   font-weight: 600;
@@ -146,11 +145,22 @@
   transform: translateY(0);
 }
 
-.genreButton i {
-  font-size: 1.75rem;
-  min-width: 40px;
-  color: var(--color-primary);
-  text-align: center;
+.genreButton i{
+
+    width:52px;
+    height:52px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    border-radius:50%;
+
+    background:#eef4ff;
+
+    color:var(--color-primary);
+
+    font-size:22px;
 }
 
 .genreButton span {
@@ -180,6 +190,28 @@
   transition: opacity var(--transition);
   z-index: 10;
 }
+
+.genreButton::before{
+
+    content:"→";
+
+    position:absolute;
+
+    right:20px;
+
+    color:#999;
+
+    transition:.2s;
+}
+
+.genreButton:hover::before{
+
+    transform:translateX(5px);
+
+    color:var(--color-primary);
+
+}
+
 
 .genreButton {
   position: relative;
