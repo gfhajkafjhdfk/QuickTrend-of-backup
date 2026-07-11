@@ -1,36 +1,244 @@
 <?php
+// チャットページ。デザインは ChatReal.html（GitHub Pagesデモ版）と同一で、
+// 認証必須・CSRF対応・XSS対策（textContent描画）を加えた本番版
 require_once __DIR__ . '/auth_check.php';
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="<?php echo htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8'); ?>" />
     <title>QuickTrend - チャット</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 1.5rem; background: #f1f5fb; }
-        .panel { max-width: 960px; margin: 0 auto; background: white; border-radius: 16px; padding: 1.4rem; box-shadow: 0 15px 36px rgba(23,51,102,.08); }
-        #messages { min-height: 320px; padding: 1rem; border: 1px solid #dfe6f0; border-radius: 12px; background: #fbfcff; overflow-y: auto; }
-        .message { margin-bottom: .9rem; }
-        .message strong { color: #26457f; }
-        .message span { display: block; margin-top: .25rem; }
-        .chat-form { margin-top: 1rem; display: flex; gap: .8rem; }
-        .chat-form input { flex: 1; padding: .9rem; border: 1px solid #c8d2e0; border-radius: 10px; }
-        .chat-form button { padding: .9rem 1.3rem; background: #2f71b2; color: white; border: none; border-radius: 10px; cursor: pointer; }
-        nav a { margin-right: 1rem; color: #2f71b2; text-decoration: none; }
-    </style>
-</head>
-<body>
-    <div class="panel">
-        <nav><a href="QuickTrend.php">戻る</a><a href="logout.php">ログアウト</a></nav>
-        <h1>チャットルーム</h1>
-        <div id="messages" aria-live="polite">メッセージを読み込み中...</div>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="../ChatReal.css" />
+    <link rel="icon" type="image/x-icon" href="../image/favicon.ico" />
+    <script
+      src="https://kit.fontawesome.com/12802bf766.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <!-- 上部コントロールバー -->
+    <header id="controlebar">
+      <div class="controlebar-links">
+        <a href="QuickTrend.php" class="toppage">トップページに戻る</a>
+        <a href="logout.php" class="backpage">ログアウト</a>
+      </div>
+      <h2>ジャンル一覧</h2>
+      <div class="ticker-wrap">
+        <div class="ticker">
+          インフォメーション随時更新。次の目的地はワクワク!? ChatRealへようこそ! あなたのアイデアを共有しよう!
+        </div>
+      </div>
+    </header>
+
+    <!-- ジャンル一覧 -->
+    <main id="genreListPage">
+      <ul id="genreList">
+        <li>
+          <button class="genreButton" data-genre="クリエイトバザール" data-tooltip="地域振興の為のアイデアを出し合いましょう！">
+            <i class="fa-solid fa-comments-dollar"></i>
+            <span>クリエイトバザール</span>
+          </button>
+        </li>
+        <li>
+          <button class="genreButton" data-genre="つながリンク" data-tooltip="町の人々と楽しめる交流イベントを計画しましょう！">
+            <i class="fa-solid fa-comments"></i>
+            <span>つながリンク</span>
+          </button>
+        </li>
+        <li>
+          <button class="genreButton" data-genre="トレンドスポット" data-tooltip="若い世代にしかない発想で様々な催しを計画しましょう！">
+            <i class="fa-solid fa-people-group"></i>
+            <span>トレンドスポット</span>
+          </button>
+        </li>
+        <li>
+          <button class="genreButton" data-genre="わくわくワークショップ" data-tooltip="社会奉仕のワークショップ等のアイデアを出しましょう！">
+            <i class="fa-solid fa-place-of-worship"></i>
+            <span>わくわくワークショップ</span>
+          </button>
+        </li>
+        <li>
+          <button class="genreButton" data-genre="ハッピーリビング" data-tooltip="暮らしが楽しくなる家庭関連のアイデアを出しましょう！">
+            <i class="fa-solid fa-people-roof"></i>
+            <span>ハッピーリビング</span>
+          </button>
+        </li>
+        <li>
+          <button class="genreButton" data-genre="政治経済" data-tooltip="経済リテラシーや良い政治の案などを出しましょう！">
+            <i class="fa-solid fa-landmark-dome"></i>
+            <span>政治経済</span>
+          </button>
+        </li>
+        <li>
+          <button class="genreButton" data-genre="くらしのバリア" data-tooltip="我々の住む町を住みやすくするにはどうしたらよいのか考えてみませんか？">
+            <i class="fa-solid fa-helmet-safety"></i>
+            <span>くらしのバリア</span>
+          </button>
+        </li>
+        <li>
+          <button class="genreButton" data-genre="LOVESPACE" data-tooltip="町の人同士で今よりも愛で満ちた暮らしにしませんか？">
+            <i class="fa-solid fa-face-grin-hearts"></i>
+            <span>LOVESPACE</span>
+          </button>
+        </li>
+        <li>
+          <button class="genreButton" data-genre="チャレンジステップ" data-tooltip="町の人々とともに冒険をしてみませんか？">
+            <i class="fa-brands fa-space-awesome"></i>
+            <span>チャレンジステップ</span>
+          </button>
+        </li>
+        <li>
+          <button class="genreButton" data-genre="CREATION" data-tooltip="町の人々とともに創造的なアイディアを出し合いましょう！">
+            <i class="fa-regular fa-lightbulb"></i>
+            <span>CREATION</span>
+          </button>
+        </li>
+        <li>
+          <button class="genreButton" data-genre="リラックススペース" data-tooltip="日々の疲れを癒せるようなアイディアを出し合いましょう！">
+            <i class="fa-solid fa-couch"></i>
+            <span>リラックススペース</span>
+          </button>
+        </li>
+        <li>
+          <button class="genreButton" data-genre="ミライソダテル" data-tooltip="子供たちのためになるアイディアを出し合いましょう！">
+            <i class="fa-solid fa-seedling"></i>
+            <span>ミライソダテル</span>
+          </button>
+        </li>
+      </ul>
+    </main>
+
+    <!-- チャット画面 -->
+    <section id="chatPage" class="hidden">
+      <div class="container">
+        <button id="backButton" type="button">← ジャンル一覧に戻る</button>
+        <h3 id="chatTitle">チャットルーム</h3>
+
+        <div class="messages-wrapper">
+          <button id="panelToggle" class="panel-toggle-button" type="button" title="入力欄を拡大">＋</button>
+          <div id="messages" class="post-history">メッセージを読み込み中...</div>
+        </div>
+
         <form id="chatForm" class="chat-form">
-            <input type="text" id="message" placeholder="メッセージを入力" aria-label="メッセージを入力" autocomplete="off" required>
-            <button type="submit">送信</button>
+          <div class="form-group">
+            <label for="message">メッセージ</label>
+            <div class="chat-compose-row">
+              <textarea id="message" class="chat-textarea" placeholder="メッセージを入力..." required></textarea>
+              <button type="button" id="attachButton" class="attach-button" title="ファイルを添付">
+                <i class="fa-solid fa-paperclip"></i>
+              </button>
+              <button type="submit" class="submit-button">送信</button>
+            </div>
+          </div>
+          <input type="file" id="fileInput" class="file-input" />
         </form>
-    </div>
-    <script src="../js/ChatReal.js"></script>
-</body>
+      </div>
+    </section>
+
+    <script>
+      var CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').content;
+      var currentGenre = "";
+
+      // ジャンルボタン → チャット画面へ切り替え
+      document.querySelectorAll(".genreButton").forEach(function (button) {
+        button.addEventListener("click", function () {
+          currentGenre = this.dataset.genre;
+          document.getElementById("chatTitle").textContent = currentGenre + " のチャット";
+          document.getElementById("genreListPage").classList.add("hidden");
+          document.getElementById("controlebar").classList.add("hidden");
+          document.getElementById("chatPage").classList.remove("hidden");
+          loadMessages();
+        });
+      });
+
+      // ジャンル一覧に戻る
+      document.getElementById("backButton").addEventListener("click", function () {
+        document.getElementById("chatPage").classList.add("hidden");
+        document.getElementById("genreListPage").classList.remove("hidden");
+        document.getElementById("controlebar").classList.remove("hidden");
+      });
+
+      // DBの値をtextContentで挿入することでXSSを防ぐ（innerHTMLは使わない）
+      function renderMessage(msg) {
+        var li = document.createElement("li");
+        var name = document.createElement("strong");
+        name.textContent = msg.user_name;
+        var body = document.createElement("span");
+        body.textContent = msg.message;
+        var time = document.createElement("small");
+        time.textContent = msg.created_at;
+        li.append(name, body, time);
+        return li;
+      }
+
+      // メッセージをサーバーから取得
+      async function loadMessages() {
+        try {
+          var response = await fetch(
+            "chat_get.php?genre=" + encodeURIComponent(currentGenre)
+          );
+          var data = await response.json();
+          var container = document.getElementById("messages");
+
+          if (!data.messages || data.messages.length === 0) {
+            container.textContent = "まだメッセージはありません";
+            return;
+          }
+          container.replaceChildren.apply(container, data.messages.map(renderMessage));
+        } catch (error) {
+          document.getElementById("messages").textContent = "メッセージの取得に失敗しました";
+          console.error(error);
+        }
+      }
+
+      // メッセージ送信
+      document.getElementById("chatForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        var message = document.getElementById("message").value.trim();
+        if (!message) return;
+
+        var response = await fetch("chat_post.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ message: message, genre: currentGenre, csrf_token: CSRF_TOKEN }),
+        });
+        if (!response.ok) {
+          alert("メッセージの送信に失敗しました。再度ログインしてください。");
+          return;
+        }
+        document.getElementById("message").value = "";
+        await loadMessages();
+      });
+
+      // ファイル添付（UIのみ）
+      document.getElementById("attachButton").addEventListener("click", function () {
+        document.getElementById("fileInput").click();
+      });
+
+      document.getElementById("fileInput").addEventListener("change", function (event) {
+        if (event.target.files.length > 0) {
+          alert("添付ファイル: " + event.target.files[0].name);
+        }
+      });
+
+      // 入力欄の拡大トグル
+      document.getElementById("panelToggle").addEventListener("click", function (e) {
+        e.preventDefault();
+        var chatPage = document.getElementById("chatPage");
+        var expanded = chatPage.classList.toggle("expanded-input");
+        this.textContent = expanded ? "−" : "＋";
+      });
+
+      // チャット表示中は5秒ごとに更新
+      setInterval(function () {
+        if (!document.getElementById("chatPage").classList.contains("hidden")) {
+          loadMessages();
+        }
+      }, 5000);
+    </script>
+  </body>
 </html>

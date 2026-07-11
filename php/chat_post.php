@@ -22,7 +22,14 @@ if (mb_strlen($message) > 1000) {//スパム・過大データ対策
     echo json_encode(['error' => 'メッセージは1000文字以内で入力してください']);
     exit;
 }
-$stmt = $pdo->prepare('INSERT INTO chat_messages (user_id, message, created_at) VALUES (:user_id, :message, NOW())');
-$stmt->execute(['user_id' => $_SESSION['user_id'], 'message' => $message]);
+// ジャンルは定義済みリスト（chat_genres.php）のいずれかのみ受け付ける
+$genre = $_POST['genre'] ?? '';
+if (!in_array($genre, require __DIR__ . '/chat_genres.php', true)) {
+    http_response_code(400);
+    echo json_encode(['error' => 'ジャンルが不正です']);
+    exit;
+}
+$stmt = $pdo->prepare('INSERT INTO chat_messages (user_id, genre, message, created_at) VALUES (:user_id, :genre, :message, NOW())');
+$stmt->execute(['user_id' => $_SESSION['user_id'], 'genre' => $genre, 'message' => $message]);
 header('Content-Type: application/json; charset=utf-8');
 echo json_encode(['success' => true]);
