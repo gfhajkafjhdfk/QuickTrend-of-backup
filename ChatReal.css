@@ -1,7 +1,19 @@
 /* ============================================
    ChatReal - チャットページ専用スタイル
    style.css のデザインシステムに準拠
+   ジャンル一覧: 3Dガラスネオンタイル（ライトモード）
    ============================================ */
+
+/* ネオンカラー（ジャンル一覧のアイコン発光・カード外周光に使用） */
+:root {
+  --neon-blue: #00AEEF;
+  --neon-blue-soft: rgba(0, 174, 239, 0.35);
+}
+
+/* ページ全体をNoto Sans JPに（未導入環境では既存のシステムフォントへフォールバック） */
+body {
+  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+}
 
 /* -------- コントロールバー -------- */
 #controlebar {
@@ -24,7 +36,9 @@
   text-align: center;
   margin: 0;
   font-size: var(--font-size-xl);
-  color: var(--color-text);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: #1f1f1f;
 }
 
 .controlebar-links {
@@ -67,7 +81,7 @@
   color: var(--color-text);
 }
 
-/* -------- ティッカー -------- */
+/* -------- ティッカー（ダークブルー + わずかなネオングロー） -------- */
 .ticker-wrap {
   width: 100%;
   overflow: hidden;
@@ -77,6 +91,8 @@
   border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
   font-weight: 500;
+  box-shadow: 0 0 14px rgba(0, 174, 239, 0.35), 0 0 4px rgba(0, 174, 239, 0.25);
+  border: 1px solid rgba(0, 174, 239, 0.25);
 }
 
 .ticker {
@@ -84,6 +100,7 @@
   white-space: nowrap;
   padding-left: 100%;
   animation: tickerMove 18s linear infinite;
+  text-shadow: 0 0 8px rgba(0, 174, 239, 0.55);/* 文字自体もわずかに発光させる */
 }
 
 @keyframes tickerMove {
@@ -104,8 +121,8 @@
 
 #genreList {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--space-md);
+  grid-template-columns: repeat(2, 1fr);/* スマホは2列（grid-cols-2） */
+  gap: 2rem;/* gap-8: タイル同士を離して個々を際立たせる */
   width: 100%;
   max-width: var(--max-width);
   list-style: none;
@@ -113,48 +130,79 @@
   margin: 0;
 }
 
+@media (min-width: 768px) {
+  #genreList {
+    grid-template-columns: repeat(4, 1fr);/* md以上は4列（md:grid-cols-4） */
+  }
+}
+
 #genreList li {
   margin: 0;
 }
 
+/* 3Dガラスネオンタイル:
+   半透明の白ガラス + 大きな角丸 + 深い影で浮遊感を出し、
+   アイコンをネオンブルーで発光させる */
 .genreButton {
   display: flex;
+  flex-direction: column;/* アイコンを大きく中央に、ジャンル名をその下に */
   align-items: center;
+  justify-content: center;
   gap: var(--space-md);
   width: 100%;
-  padding: var(--space-lg);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+  min-height: 150px;
+  padding: var(--space-xl) var(--space-md);
+  color: #1f1f1f;
+  border: 1px solid rgba(0, 174, 239, 0.14);
+  border-radius: var(--radius-lg);/* rounded-2xl */
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.78));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow:
+    0 20px 40px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);/* 上辺のハイライトでガラスの光沢を出す */
   font-size: var(--font-size-base);
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  text-align: left;
-  transition: transform var(--transition), box-shadow var(--transition),
-    border-color var(--transition);
+  text-align: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
+/* ホバー: 浮き上がり + 影が深くなり、外周に薄いネオンの光 */
 .genreButton:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-primary-light);
+  transform: translateY(-5px);
+  border-color: var(--neon-blue-soft);
+  box-shadow:
+    0 28px 56px rgba(15, 23, 42, 0.18),
+    0 0 0 2px var(--neon-blue-soft),
+    0 0 22px var(--neon-blue-soft),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
+/* クリック: 明確に沈み込む */
 .genreButton:active {
-  transform: translateY(0);
+  transform: translateY(-1px) scale(0.92);
+  box-shadow:
+    0 10px 20px rgba(15, 23, 42, 0.14),
+    0 0 14px var(--neon-blue-soft);
 }
 
 .genreButton i {
-  font-size: 1.75rem;
-  min-width: 40px;
-  color: var(--color-primary);
+  font-size: 2.6rem;
+  color: var(--neon-blue);
   text-align: center;
+  filter: drop-shadow(0 0 10px rgba(0, 174, 239, 0.75));/* アイコン自体の発光 */
+  transition: filter 0.25s ease, transform 0.25s ease;
+}
+
+/* ホバーでネオンを増幅 */
+.genreButton:hover i {
+  filter: drop-shadow(0 0 20px var(--neon-blue)) drop-shadow(0 0 6px rgba(0, 174, 239, 0.6));
+  transform: scale(1.08);
 }
 
 .genreButton span {
-  flex: 1;
+  line-height: 1.4;
 }
 
 /* ツールチップ */
@@ -430,8 +478,19 @@
 
 /* -------- レスポンシブ -------- */
 @media (max-width: 768px) {
+  /* ジャンル一覧は2列のまま（基本定義側）。タイルの余白だけ詰める */
   #genreList {
-    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .genreButton {
+    min-height: 128px;
+    padding: var(--space-lg) var(--space-sm);
+    font-size: var(--font-size-sm);
+  }
+
+  .genreButton i {
+    font-size: 2.1rem;
   }
 
   .chat-compose-row {
