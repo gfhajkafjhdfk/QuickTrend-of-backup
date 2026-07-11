@@ -14,7 +14,8 @@
   <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
   <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" type="text/css" />
 
-  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+  <!-- Turf.jsはフルビルドを明示的にバージョン固定で読み込む（turf.circle/featureCollection等を確実に含める） -->
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 </head>
 
@@ -967,6 +968,11 @@
         btn.setAttribute('title', '展開');
         btn.setAttribute('aria-label', 'ランキングパネルを展開');
       }
+    }
+
+    // スマホでは初期状態でランキングを最小化する（地図とボタン類の視認性を優先）
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      toggleRankingPanel();
     }
 
     // 選択建物をハイライト表示する
