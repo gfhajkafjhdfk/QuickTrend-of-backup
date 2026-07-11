@@ -82,12 +82,13 @@ circle at top,
 .ticker-wrap {
   width: 100%;
   overflow: hidden;
-  background: var(--color-nav-bg);
-  color: var(--color-accent);
+  background: #0f172a; /* 引き締まったダークネイビー */
+  color: #ffffff; /* 文字をパキッと白に！ */
   padding: var(--space-sm) 0;
   border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
   font-weight: 500;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .ticker {
@@ -114,12 +115,18 @@ circle at top,
 }
 
 #genreList {
-  /* 1列の幅を少し広げて、説明文が読みやすいようにします */
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: grid; /* これが抜けていたため縦一列になっていました */
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* 幅を少し広げて調整 */
+  gap: var(--space-md); /* カード同士のすき間 */
+  padding: 0; /* 左側の余白をリセット */
+  list-style: none; /* 左側の黒い丸（・）を消します */
+  width: 100%;
+  max-width: 1200px; /* 画面いっぱいに広がりすぎないように制限 */
 }
 
 #genreList li {
   margin: 0;
+  list-style: none; /* 念のためここでも黒丸を非表示に */
 }
 
 .genreButton {
@@ -302,24 +309,43 @@ circle at top,
   text-align: center;
 }
 
+/* メッセージひとつひとつの外枠 */
 #messages li {
   list-style: none;
-  padding: var(--space-md);
-  margin-bottom: var(--space-sm);
-  background: var(--color-surface);
-  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-md);
+  background: #ffffff; /* 白い吹き出し */
+  border-radius: 0px 16px 16px 16px; /* チャット風の角丸 */
   border: 1px solid var(--color-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  max-width: 85%; /* 横に広がりすぎないように */
+  width: fit-content; /* 文字の長さに合わせる */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
+/* ユーザー名 */
 #messages li strong {
   display: block;
-  margin-bottom: var(--space-xs);
   color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 700;
 }
 
+/* メッセージ本文 */
+#messages li span {
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  word-break: break-all; /* 長い英単語でも自動改行 */
+}
+
+/* 投稿時間 */
 #messages li small {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+  align-self: flex-end; /* 時間を右下にちょこんと配置 */
+  color: #94a3b8;
+  font-size: 10px;
 }
 
 .message {
