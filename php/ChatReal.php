@@ -163,15 +163,23 @@ require_once __DIR__ . '/auth_check.php';
       });
 
       // DBの値をtextContentで挿入することでXSSを防ぐ（innerHTMLは使わない）
+      // 自分の発言は右（アクションカラーの淡いグラデーション）、相手は左（薄グレー）に振り分ける
       function renderMessage(msg) {
         var li = document.createElement("li");
-        var name = document.createElement("strong");
-        name.textContent = msg.user_name;
+        li.className = "chat-msg " + (msg.is_own ? "chat-msg-own" : "chat-msg-other");
+        if (!msg.is_own) {
+          var name = document.createElement("strong");
+          name.className = "chat-msg-name";
+          name.textContent = msg.user_name;
+          li.appendChild(name);
+        }
         var body = document.createElement("span");
+        body.className = "chat-msg-bubble";
         body.textContent = msg.message;
         var time = document.createElement("small");
+        time.className = "chat-msg-time";
         time.textContent = msg.created_at;
-        li.append(name, body, time);
+        li.append(body, time);
         return li;
       }
 
@@ -188,7 +196,10 @@ require_once __DIR__ . '/auth_check.php';
             container.textContent = "まだメッセージはありません";
             return;
           }
+          // 最下部（最新）に張り付いていた場合のみ、更新後も最新へ追従する
+          var stick = container.scrollHeight - container.scrollTop - container.clientHeight < 40;
           container.replaceChildren.apply(container, data.messages.map(renderMessage));
+          if (stick) container.scrollTop = container.scrollHeight;
         } catch (error) {
           document.getElementById("messages").textContent = "メッセージの取得に失敗しました";
           console.error(error);

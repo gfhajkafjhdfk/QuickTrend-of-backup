@@ -189,9 +189,22 @@
   opacity: 1;
 }
 
-/* -------- チャット画面 -------- */
+/* -------- チャット画面 --------
+   心理学的デザイン:
+   - アクションカラーは「行動・エネルギー・注目」を促すオレンジ(#FF6B35)
+   - 自分の発言 = 右・アクションカラーの淡いグラデーション / 相手 = 左・薄グレー
+   - バブルは大きな角丸 + 会話の進行方向側だけ角を鋭く（視線誘導・フレーミング効果） */
+:root {
+  --chat-action: #FF6B35;
+  --chat-action-strong: #F1521A;/* ホバー時: 彩度を上げて「押せる」感覚を強調 */
+  --chat-action-soft-1: rgba(255, 107, 53, 0.10);
+  --chat-action-soft-2: rgba(255, 107, 53, 0.20);
+}
+
 #chatPage {
   padding: var(--space-lg) 0 var(--space-2xl);
+  background: #ffffff;/* 純白ベースで会話に没入させる */
+  min-height: 100vh;
 }
 
 #chatPage .container {
@@ -234,22 +247,27 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: var(--color-primary);
+  background: var(--chat-action);/* アクションカラーに統一 */
   color: #fff;
   font-size: var(--font-size-lg);
   z-index: 2;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
 }
 
 #messages {
   position: relative;
   height: 50vh;
   min-height: 280px;
-  padding: var(--space-2xl) var(--space-md) var(--space-md);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-bg);
+  padding: var(--space-2xl) var(--space-lg) var(--space-lg);
+  border: 1px solid #f0f0f0;
+  border-radius: var(--radius-lg);
+  background: #ffffff;
   overflow-y: auto;
   transition: height 0.3s ease;
+  /* バブルを左右に振り分けるための縦フレックス。余白を広く取り会話に集中させる */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
 }
 
 #messages p {
@@ -258,32 +276,57 @@
   text-align: center;
 }
 
-#messages li {
+/* ---- メッセージバブル ---- */
+.chat-msg {
   list-style: none;
-  padding: var(--space-md);
-  margin-bottom: var(--space-sm);
-  background: var(--color-surface);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
+  max-width: 78%;
+  display: flex;
+  flex-direction: column;
 }
 
-#messages li strong {
-  display: block;
-  margin-bottom: var(--space-xs);
-  color: var(--color-primary);
+.chat-msg-other {
+  align-self: flex-start;
+  align-items: flex-start;
 }
 
-#messages li small {
-  color: var(--color-text-muted);
+.chat-msg-own {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.chat-msg-name {
+  margin-bottom: 2px;
   font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
 }
 
-.message {
-  margin-bottom: var(--space-md);
+.chat-msg-bubble {
+  padding: 0.7rem 1.05rem;
+  border-radius: 16px;/* rounded-2xl相当の大きな角丸 */
+  font-size: var(--font-size-base);
+  line-height: 1.65;
+  color: var(--color-text);
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
-.message strong {
-  color: var(--color-primary);
+/* 相手（地元の人）: 左・超薄グレー。左下だけ鋭くして発言者側へ視線を誘導 */
+.chat-msg-other .chat-msg-bubble {
+  background: #f2f2f2;
+  border-bottom-left-radius: 4px;
+}
+
+/* 自分: 右・アクションカラーの淡いグラデーション。右下だけ鋭くして次の入力へ視線を流す */
+.chat-msg-own .chat-msg-bubble {
+  background: linear-gradient(135deg, var(--chat-action-soft-1), var(--chat-action-soft-2));
+  border-bottom-right-radius: 4px;
+}
+
+.chat-msg-time {
+  margin-top: 4px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
 }
 
 /* -------- チャット入力 -------- */
@@ -305,13 +348,29 @@
   gap: var(--space-sm);
 }
 
+/* 入力フィールド: 大きな角丸 + 内側の薄い影で「ここに入れる」というアフォーダンスを強調 */
 .chat-textarea {
   width: 100%;
   min-height: 100px;
   max-height: 240px;
-  resize: vertical;
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
+  resize: none;
+  padding: 1rem 1.4rem;
+  background: #ffffff;
+  border: 2px solid #ececec;
+  border-radius: 28px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.chat-textarea::placeholder {
+  color: #9aa0a6;
+}
+
+/* フォーカス時: アクションカラーのボーダーを滑らかに表示 */
+.chat-textarea:focus {
+  outline: none;
+  border-color: var(--chat-action);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04), 0 0 0 4px var(--chat-action-soft-1);
 }
 
 .attach-button,
@@ -323,19 +382,37 @@
 
 .attach-button {
   padding: 0.75rem var(--space-md);
-  background: var(--color-bg);
-  color: var(--color-primary);
-  border: 1px solid var(--color-border);
+  background: #ffffff;
+  color: var(--chat-action);
+  border: 1px solid #ececec;
+  border-radius: var(--radius-full);
+  transition: background var(--transition);
 }
 
 .attach-button:hover {
-  background: var(--color-primary-light);
+  background: var(--chat-action-soft-1);
 }
 
+/* 送信ボタン: 行動を促すオレンジ + ホバーで彩度と影を強めて「押せる」感覚を出す */
 .submit-button {
-  padding: 0.75rem var(--space-lg);
-  background: var(--color-primary);
+  padding: 0.85rem 1.7rem;
+  background: var(--chat-action);
   color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(255, 107, 53, 0.35);
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.submit-button:hover {
+  background: var(--chat-action-strong);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.45);
+  transform: translateY(-1px);
+}
+
+.submit-button:active {
+  transform: translateY(0);
 }
 
 .file-input {
