@@ -607,6 +607,11 @@
         lastFetchTime = now;
       } catch (e) {
         showError('データ取得に失敗しました: ' + e.message);
+        // 一度も表示できていない場合は「読み込み中...」のまま放置せず状態を知らせる
+        const rankingList = document.getElementById('ranking-list');
+        if (rankingList && !rankingList.querySelector('.ranking-item')) {
+          rankingList.replaceChildren(makeRankingItem('!', 'データを取得できませんでした', '-', null));
+        }
       }
     }
 
@@ -906,44 +911,45 @@
         .sort((a, b) => b.count - a.count)
         .slice(0, 5); // 上位5件
 
-      // HTMLを構築
+      // DOM APIで構築（textContent挿入。店名に引用符等が含まれてもHTMLが壊れず、XSSも防ぐ）
       if (rankData.length === 0) {
-        rankingList.innerHTML = `
-          <li class="ranking-item-skeleton">
-            <span class="ranking-rank">-</span>
-            <span class="ranking-name">データなし</span>
-            <span class="ranking-count">0</span>
-          </li>
-        `;
+        rankingList.replaceChildren(makeRankingItem('-', 'データなし', '0', null));
         return;
       }
-
-      rankingList.innerHTML = rankData.map((item, idx) => `
-        <li class="ranking-item" role="listitem" data-coords='${JSON.stringify(item.coords)}' onclick="onRankingItemClick(this)" style="cursor: pointer;">
-          <span class="ranking-rank">${idx + 1}</span>
-          <span class="ranking-name" title="${item.name}">${item.name}</span>
-          <span class="ranking-count">${item.count}票</span>
-        </li>
-      `).join('');
+      rankingList.replaceChildren(
+        ...rankData.map((item, idx) => makeRankingItem(idx + 1, item.name, item.count + '票', item.coords))
+      );
     }
 
-    // ランキング項目をクリックしたときの処理
-    function onRankingItemClick(element) {
-      const coordStr = element.getAttribute('data-coords');
-      if (!coordStr) return;
-      try {
-        const coords = JSON.parse(coordStr);
-        const [lng, lat] = coords;
-        map.flyTo({
-          center: [lng, lat],
-          zoom: 17,
-          pitch: MAP_CONFIG.defaultPitch,
-          bearing: MAP_CONFIG.defaultBearing,
-          duration: 800
+    // ランキング1行分の要素を生成する。coordsがあればクリックでその場所へ移動
+    function makeRankingItem(rank, name, count, coords) {
+      const li = document.createElement('li');
+      li.className = coords ? 'ranking-item' : 'ranking-item-skeleton';
+      const rankEl = document.createElement('span');
+      rankEl.className = 'ranking-rank';
+      rankEl.textContent = rank;
+      const nameEl = document.createElement('span');
+      nameEl.className = 'ranking-name';
+      nameEl.textContent = name;
+      nameEl.title = name;
+      const countEl = document.createElement('span');
+      countEl.className = 'ranking-count';
+      countEl.textContent = count;
+      li.append(rankEl, nameEl, countEl);
+      if (coords) {
+        li.setAttribute('role', 'listitem');
+        li.style.cursor = 'pointer';
+        li.addEventListener('click', () => {
+          map.flyTo({
+            center: coords,
+            zoom: 17,
+            pitch: MAP_CONFIG.defaultPitch,
+            bearing: MAP_CONFIG.defaultBearing,
+            duration: 800
+          });
         });
-      } catch (e) {
-        console.error('座標解析エラー:', e);
       }
+      return li;
     }
 
     // ランキングパネルの最小化・展開をトグル
@@ -968,11 +974,6 @@
         btn.setAttribute('title', '展開');
         btn.setAttribute('aria-label', 'ランキングパネルを展開');
       }
-    }
-
-    // スマホでは初期状態でランキングを最小化する（地図とボタン類の視認性を優先）
-    if (window.matchMedia('(max-width: 768px)').matches) {
-      toggleRankingPanel();
     }
 
     // 選択建物をハイライト表示する

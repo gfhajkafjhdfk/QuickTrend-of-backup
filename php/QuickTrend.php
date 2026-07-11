@@ -1,7 +1,12 @@
 <?php
 require_once __DIR__ . '/auth_check.php';
-$name = htmlspecialchars($_SESSION['user_name'] ?? 'ゲスト', ENT_QUOTES, 'UTF-8');
-$genre = htmlspecialchars($_SESSION['user_genre'] ?? 'unknown', ENT_QUOTES, 'UTF-8');
+$rawName = $_SESSION['user_name'] ?? 'ゲスト';
+$name = htmlspecialchars($rawName, ENT_QUOTES, 'UTF-8');
+$initial = htmlspecialchars(mb_substr($rawName, 0, 1), ENT_QUOTES, 'UTF-8');// アバター用の頭文字
+// ジャンルコード → 日本語表示（sighup.htmlの選択肢と対応）
+$genreLabels = ['music' => '🎵 音楽', 'travel' => '✈️ 旅行', 'food' => '🍜 グルメ', 'movie' => '🎬 映画', 'sports' => '⚽ スポーツ'];
+$rawGenre = $_SESSION['user_genre'] ?? '';
+$genre = htmlspecialchars($genreLabels[$rawGenre] ?? ($rawGenre !== '' ? $rawGenre : 'unknown'), ENT_QUOTES, 'UTF-8');
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -15,13 +20,17 @@ $genre = htmlspecialchars($_SESSION['user_genre'] ?? 'unknown', ENT_QUOTES, 'UTF
 <body class="dash-body">
     <div class="dash-page">
         <header class="dash-header">
-            <div>
-                <h1>QuickTrendへようこそ、<?php echo $name; ?> さん</h1>
-                <p class="dash-genre">選択ジャンル: <?php echo $genre; ?></p>
+            <div class="dash-user">
+                <div class="dash-avatar" aria-hidden="true"><?php echo $initial; ?></div>
+                <div>
+                    <p class="dash-eyebrow">QuickTrendへようこそ</p>
+                    <h1><?php echo $name; ?> さん</h1>
+                    <span class="dash-genre-badge">選択ジャンル: <?php echo $genre; ?></span>
+                </div>
             </div>
             <nav class="dash-actions">
-                <a href="settings.php">アカウント設定</a>
-                <a href="logout.php">ログアウト</a>
+                <a class="dash-btn dash-btn-ghost" href="settings.php">アカウント設定</a>
+                <a class="dash-btn dash-btn-danger" href="logout.php">ログアウト</a>
             </nav>
         </header>
 
