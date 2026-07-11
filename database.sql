@@ -3,7 +3,7 @@ USE quicktrend;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     genre VARCHAR(80) NOT NULL,
@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS chat_messages (
     user_id INT NOT NULL,
     message TEXT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_created (created_at),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -131,5 +132,4 @@ CREATE TABLE IF NOT EXISTS aggregate_meta (
     meta_value VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO users (name, email, password_hash, genre, profile, created_at) VALUES
-('テストユーザー', 'test@example.com', '$2y$10$e0NR7D1pC1MGfR12Q1oyJOv7i3Q9EbSMn1jVdFV0j3xl/7DHGQ7e6', 'music', 'テスト用のユーザーです。', NOW());
+-- 開発用のテストユーザーは database.seed.dev.sql に分離した（本番には投入しない）
