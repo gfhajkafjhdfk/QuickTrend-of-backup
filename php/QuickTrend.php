@@ -18,7 +18,10 @@ $genre = htmlspecialchars($_SESSION['user_genre'] ?? 'unknown', ENT_QUOTES, 'UTF
                 <h1>QuickTrendへようこそ、<?php echo $name; ?> さん</h1>
                 <p>選択ジャンル: <?php echo $genre; ?></p>
             </div>
-            <a class="dashboard-logout" href="logout.php">ログアウト</a>
+            <div>
+                <a class="dashboard-logout" href="settings.php">アカウント設定</a>
+                <a class="dashboard-logout" href="logout.php">ログアウト</a>
+            </div>
         </header>
         <nav class="card-grid">
             <a class="app-card" href="../matchAI.html">
