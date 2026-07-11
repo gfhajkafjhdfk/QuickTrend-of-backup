@@ -12,8 +12,8 @@
         <h1>新規登録</h1>
         <p id="authMessage" class="error" hidden></p>
         <form method="post" action="php/register.php">
-            <label for="name">ニックネーム
-                <input type="text" id="name" name="name" required autocomplete="nickname">
+            <label for="name">ニックネーム（2〜50文字）
+                <input type="text" id="name" name="name" required minlength="2" maxlength="50" autocomplete="nickname">
             </label>
             <label for="email">メールアドレス
                 <input type="email" id="email" name="email" required autocomplete="email">
@@ -43,6 +43,8 @@
             signup_failed: '入力内容に不備があります。もう一度入力してください。',
             weak_password: 'パスワードは8文字以上で、英字と数字を両方含めてください。',
             email_taken: 'このメールアドレスは既に登録されています。',
+            invalid_name: 'ニックネームは2〜50文字で入力してください。',
+            name_taken: 'このニックネームは既に使われています。',
             invalid_request: '不正なリクエストです。もう一度入力してください。'
         };
         var msg = new URLSearchParams(location.search).get('msg');

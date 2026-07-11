@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/session_boot.php';
 require_once __DIR__ . '/db_connect.php';
+require_once __DIR__ . '/validation.php';
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ../sighup.html');
     exit;
@@ -17,8 +18,13 @@ if (!$name || !$email || !$password || !$genre) {
     header('Location: ../sighup.html?msg=signup_failed');
     exit;
 }
+// ニックネームポリシー: 2〜50文字・制御文字禁止
+if (!valid_username($name)) {
+    header('Location: ../sighup.html?msg=invalid_name');
+    exit;
+}
 // パスワードポリシー: 8文字以上かつ英字と数字を両方含む
-if (strlen($password) < 8 || !preg_match('/[A-Za-z]/', $password) || !preg_match('/[0-9]/', $password)) {
+if (!valid_password($password)) {
     header('Location: ../sighup.html?msg=weak_password');
     exit;
 }
@@ -28,9 +34,28 @@ if ($stmt->fetch()) {
     header('Location: ../sighup.html?msg=email_taken');
     exit;
 }
+// ニックネームの重複確認
+$stmt = $pdo->prepare('SELECT id FROM users WHERE name = :name');
+$stmt->execute(['name' => $name]);
+if ($stmt->fetch()) {
+    header('Location: ../sighup.html?msg=name_taken');
+    exit;
+}
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-$insert = $pdo->prepare('INSERT INTO users (name, email, password_hash, genre, created_at) VALUES (:name, :email, :password_hash, :genre, NOW())');
-$insert->execute([ 'name' => $name, 'email' => $email, 'password_hash' => $passwordHash, 'genre' => $genre ]);
+try {
+    $insert = $pdo->prepare('INSERT INTO users (name, email, password_hash, genre, created_at) VALUES (:name, :email, :password_hash, :genre, NOW())');
+    $insert->execute([ 'name' => $name, 'email' => $email, 'password_hash' => $passwordHash, 'genre' => $genre ]);
+} catch (PDOException $e) {
+    // 事前チェックとINSERTの間に同じメール/ニックネームが登録された場合（UNIQUE制約違反）
+    if ($e->getCode() === '23000') {
+        $stmt = $pdo->prepare('SELECT id FROM users WHERE email = :email');
+        $stmt->execute(['email' => $email]);
+        $msg = $stmt->fetch() ? 'email_taken' : 'name_taken';
+        header('Location: ../sighup.html?msg=' . $msg);
+        exit;
+    }
+    throw $e;
+}
 $userId = $pdo->lastInsertId();
 session_regenerate_id(true);//セッション固定化攻撃対策
 $_SESSION['user_id'] = $userId;
