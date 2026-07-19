@@ -15,11 +15,29 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }} # 環境変数経由で受け取る（スクリプトへの直接埋め込みより安全・堅牢）
         run: |
+          if [ -z "$DEPLOY_KEY" ]; then
+            echo "::error::DEPLOY_KEY secretが未登録です。リポジトリのSettings > Secrets and variables > Actions で登録してください"
+            exit 1
+          fi
           mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          # Windowsのクリップボード経由で混入しがちなCR(\r)を除去し、末尾に改行を保証する
+          printf '%s' "$DEPLOY_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+          echo >> ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H 160.251.143.121 >> ~/.ssh/known_hosts
+          # 鍵の形式チェック（壊れた鍵ならここで分かるメッセージを出して止める）
+          if ! ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null 2>&1; then
+            echo "::error::DEPLOY_KEYの内容が秘密鍵として不正です（コピー漏れ・余分な文字の混入の可能性）"
+            exit 1
+          fi
+          # known_hosts取得（一時的なネットワーク不調に備えて3回までリトライ）
+          for i in 1 2 3; do
+            ssh-keyscan -T 15 -H 160.251.143.121 >> ~/.ssh/known_hosts && break
+            echo "ssh-keyscanリトライ ($i/3)"; sleep 5
+          done
+          grep -q 160.251.143.121 ~/.ssh/known_hosts || { echo "::error::サーバーに到達できません(ssh-keyscan失敗)"; exit 1; }
 
       # 本番に必要なファイルだけを転送する。
       # 開発用ファイル（DBスキーマ・設計メモ・未ビルドNext.js等）はWebルートに置かない。
