@@ -203,39 +203,7 @@ body {
 
 .genreButton span {
   line-height: 1.4;
-}
 
-/* ツールチップ */
-.genreButton::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 8px);
-  transform: translateX(-50%);
-  width: max-content;
-  max-width: 220px;
-  padding: var(--space-sm) var(--space-md);
-  color: #fff;
-  background: var(--color-nav-bg);
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-sm);
-  font-weight: 400;
-  line-height: 1.4;
-  text-align: center;
-  white-space: normal;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--transition);
-  z-index: 10;
-}
-
-.genreButton {
-  position: relative;
-}
-
-.genreButton:hover::after {
-  opacity: 1;
-}
 
 /* -------- チャット画面 --------
    心理学的デザイン:
@@ -500,4 +468,5 @@ body {
   .chat-textarea {
     min-height: 80px;
   }
+}
 }
