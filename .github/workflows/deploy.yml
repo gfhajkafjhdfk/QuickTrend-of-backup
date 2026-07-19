@@ -43,11 +43,16 @@ jobs:
           fi
           echo "鍵の検証: OK"
           # known_hosts取得（一時的なネットワーク不調に備えて3回までリトライ）
+          # ssh-keyscanは到達不可でも終了コード0を返し得るため、出力が空でないことで成否を判定する
           for i in 1 2 3; do
-            ssh-keyscan -T 15 -H 160.251.143.121 >> ~/.ssh/known_hosts && break
+            if ssh-keyscan -T 15 160.251.143.121 > /tmp/ks_out 2>/dev/null && [ -s /tmp/ks_out ]; then
+              cat /tmp/ks_out >> ~/.ssh/known_hosts
+              echo "known_hosts取得: OK ($(wc -l < /tmp/ks_out)件)"
+              break
+            fi
             echo "ssh-keyscanリトライ ($i/3)"; sleep 5
           done
-          grep -q 160.251.143.121 ~/.ssh/known_hosts || { echo "::error::サーバーに到達できません(ssh-keyscan失敗)"; exit 1; }
+          [ -s /tmp/ks_out ] || { echo "::error::サーバーに到達できません(ssh-keyscan失敗)。ConoHaで22番が開いているか確認してください"; exit 1; }
 
       # 本番に必要なファイルだけを転送する。
       # 開発用ファイル（DBスキーマ・設計メモ・未ビルドNext.js等）はWebルートに置かない。
