@@ -23,15 +23,25 @@ jobs:
             exit 1
           fi
           mkdir -p ~/.ssh
-          # Windowsのクリップボード経由で混入しがちなCR(\r)を除去し、末尾に改行を保証する
-          printf '%s' "$DEPLOY_KEY" | tr -d '\r' > ~/.ssh/deploy_key
-          echo >> ~/.ssh/deploy_key
+          # 安全な診断情報（鍵の中身そのものは絶対に出力しない）
+          echo "Secret文字数: ${#DEPLOY_KEY}"
+          case "$DEPLOY_KEY" in
+            -----BEGIN*) echo "形式: PEM（そのまま使用）"
+              printf '%s' "$DEPLOY_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+              echo >> ~/.ssh/deploy_key ;;
+            ssh-ed25519*|ssh-rsa*) echo "::error::公開鍵(.pub)が貼られています。秘密鍵またはそのBase64を登録してください"; exit 1 ;;
+            *) echo "形式: Base64として復号を試行"
+              if ! printf '%s' "$DEPLOY_KEY" | tr -d ' \r\n' | base64 -d > ~/.ssh/deploy_key 2>/dev/null; then
+                echo "::error::DEPLOY_KEYがPEMでもBase64でもありません"; exit 1
+              fi ;;
+          esac
           chmod 600 ~/.ssh/deploy_key
           # 鍵の形式チェック（壊れた鍵ならここで分かるメッセージを出して止める）
           if ! ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null 2>&1; then
             echo "::error::DEPLOY_KEYの内容が秘密鍵として不正です（コピー漏れ・余分な文字の混入の可能性）"
             exit 1
           fi
+          echo "鍵の検証: OK"
           # known_hosts取得（一時的なネットワーク不調に備えて3回までリトライ）
           for i in 1 2 3; do
             ssh-keyscan -T 15 -H 160.251.143.121 >> ~/.ssh/known_hosts && break
