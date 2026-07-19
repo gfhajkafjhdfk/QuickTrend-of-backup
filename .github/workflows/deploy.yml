@@ -6,6 +6,12 @@ on:
       - main # mainブランチにpushされたら自動デプロイ
   workflow_dispatch: # Actionsタブから手動実行も可能にする
 
+# 同時デプロイの競合を防ぐ。先行デプロイの完了を待ってから次を1件ずつ実行する
+# （複数人がほぼ同時にpushしてもrsyncが並走せず、ファイルが半端な状態で混ざらない）
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -13,6 +19,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # 転送より前に静的検証する。壊れていればここでジョブが止まり、本番は無傷のまま残る
+      - name: Validate (pre-deploy)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq php-cli > /dev/null
+          python3 .github/scripts/validate.py
 
       - name: Setup SSH
         env:
@@ -75,8 +87,8 @@ jobs:
             -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
             ./ root@160.251.143.121:/var/www/quicktrend/
 
-      # 所有権・権限を本番ポリシー（root管理・www-dataは読み取りのみ）に揃え、
-      # PHP構文チェックで壊れたデプロイを検知する
+      # 所有権・権限を本番ポリシー（root管理・www-dataは読み取りのみ）に揃える。
+      # 構文検証は転送前のValidateステップで実施済みだが、念のためサーバー側でも最終確認する
       - name: Fix permissions & verify
         run: |
           ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes root@160.251.143.121 '
