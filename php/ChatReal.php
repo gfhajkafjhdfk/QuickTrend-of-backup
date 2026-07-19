@@ -41,79 +41,92 @@ require_once __DIR__ . '/auth_check.php';
     <main id="genreListPage">
       <ul id="genreList">
         <li>
-          <button class="genreButton" data-genre="クリエイトバザール" data-tooltip="地域振興の為のアイデアを出し合いましょう！">
+          <button class="genreButton" data-genre="クリエイトバザール" data-desc="地域振興の為のアイデアを出し合いましょう！">
             <i class="fa-solid fa-comments-dollar"></i>
             <span>クリエイトバザール</span>
           </button>
         </li>
         <li>
-          <button class="genreButton" data-genre="つながリンク" data-tooltip="町の人々と楽しめる交流イベントを計画しましょう！">
+          <button class="genreButton" data-genre="つながリンク" data-desc="町の人々と楽しめる交流イベントを計画しましょう！">
             <i class="fa-solid fa-comments"></i>
             <span>つながリンク</span>
           </button>
         </li>
         <li>
-          <button class="genreButton" data-genre="トレンドスポット" data-tooltip="若い世代にしかない発想で様々な催しを計画しましょう！">
+          <button class="genreButton" data-genre="トレンドスポット" data-desc="若い世代にしかない発想で様々な催しを計画しましょう！">
             <i class="fa-solid fa-people-group"></i>
             <span>トレンドスポット</span>
           </button>
         </li>
         <li>
-          <button class="genreButton" data-genre="わくわくワークショップ" data-tooltip="社会奉仕のワークショップ等のアイデアを出しましょう！">
+          <button class="genreButton" data-genre="わくわくワークショップ" data-desc="社会奉仕のワークショップ等のアイデアを出しましょう！">
             <i class="fa-solid fa-place-of-worship"></i>
             <span>わくわくワークショップ</span>
           </button>
         </li>
         <li>
-          <button class="genreButton" data-genre="ハッピーリビング" data-tooltip="暮らしが楽しくなる家庭関連のアイデアを出しましょう！">
+          <button class="genreButton" data-genre="ハッピーリビング" data-desc="暮らしが楽しくなる家庭関連のアイデアを出しましょう！">
             <i class="fa-solid fa-people-roof"></i>
             <span>ハッピーリビング</span>
           </button>
         </li>
         <li>
-          <button class="genreButton" data-genre="政治経済" data-tooltip="経済リテラシーや良い政治の案などを出しましょう！">
+          <button class="genreButton" data-genre="政治経済" data-desc="経済リテラシーや良い政治の案などを出しましょう！">
             <i class="fa-solid fa-landmark-dome"></i>
             <span>政治経済</span>
           </button>
         </li>
         <li>
-          <button class="genreButton" data-genre="くらしのバリア" data-tooltip="我々の住む町を住みやすくするにはどうしたらよいのか考えてみませんか？">
+          <button class="genreButton" data-genre="くらしのバリア" data-desc="我々の住む町を住みやすくするにはどうしたらよいのか考えてみませんか？">
             <i class="fa-solid fa-helmet-safety"></i>
             <span>くらしのバリア</span>
           </button>
         </li>
         <li>
-          <button class="genreButton" data-genre="LOVESPACE" data-tooltip="町の人同士で今よりも愛で満ちた暮らしにしませんか？">
+          <button class="genreButton" data-genre="LOVESPACE" data-desc="町の人同士で今よりも愛で満ちた暮らしにしませんか？">
             <i class="fa-solid fa-face-grin-hearts"></i>
             <span>LOVESPACE</span>
           </button>
         </li>
         <li>
-          <button class="genreButton" data-genre="チャレンジステップ" data-tooltip="町の人々とともに冒険をしてみませんか？">
+          <button class="genreButton" data-genre="チャレンジステップ" data-desc="町の人々とともに冒険をしてみませんか？">
             <i class="fa-brands fa-space-awesome"></i>
             <span>チャレンジステップ</span>
           </button>
         </li>
         <li>
-          <button class="genreButton" data-genre="CREATION" data-tooltip="町の人々とともに創造的なアイディアを出し合いましょう！">
+          <button class="genreButton" data-genre="CREATION" data-desc="町の人々とともに創造的なアイディアを出し合いましょう！">
             <i class="fa-regular fa-lightbulb"></i>
             <span>CREATION</span>
           </button>
         </li>
         <li>
-          <button class="genreButton" data-genre="リラックススペース" data-tooltip="日々の疲れを癒せるようなアイディアを出し合いましょう！">
+          <button class="genreButton" data-genre="リラックススペース" data-desc="日々の疲れを癒せるようなアイディアを出し合いましょう！">
             <i class="fa-solid fa-couch"></i>
             <span>リラックススペース</span>
           </button>
         </li>
         <li>
-          <button class="genreButton" data-genre="ミライソダテル" data-tooltip="子供たちのためになるアイディアを出し合いましょう！">
+          <button class="genreButton" data-genre="ミライソダテル" data-desc="子供たちのためになるアイディアを出し合いましょう！">
             <i class="fa-solid fa-seedling"></i>
             <span>ミライソダテル</span>
           </button>
         </li>
       </ul>
     </main>
+
+    <!-- ジャンル確認ポップアップ（ChatReal.htmlのポップアップ設定を移植） -->
+    <div id="genreModal" class="modal hidden">
+      <div class="modal-overlay" id="modalOverlay"></div>
+      <div class="modal-content">
+        <h3 id="modalTitle">ジャンル名</h3>
+        <p id="modalDescription">ここに説明文が入ります。</p>
+        <div class="modal-actions">
+          <button id="modalCloseButton" type="button">閉じる</button>
+          <button id="modalSubmitButton" type="button">チャットに参加する</button>
+        </div>
+      </div>
+    </div>
 
     <!-- チャット画面 -->
     <section id="chatPage" class="hidden">
@@ -127,6 +140,7 @@ require_once __DIR__ . '/auth_check.php';
         </div>
 
         <form id="chatForm" class="chat-form">
+          <div id="attachmentPreview" class="attachment-preview hidden"></div>
           <div class="form-group">
             <label for="message">メッセージ</label>
             <div class="chat-compose-row">
@@ -146,17 +160,36 @@ require_once __DIR__ . '/auth_check.php';
       var CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').content;
       var currentGenre = "";
 
-      // ジャンルボタン → チャット画面へ切り替え
+      var modal = document.getElementById("genreModal");
+      var modalTitle = document.getElementById("modalTitle");
+      var modalDesc = document.getElementById("modalDescription");
+
+      // ジャンルボタン → 確認ポップアップを表示（説明文はdata-descから取得）
       document.querySelectorAll(".genreButton").forEach(function (button) {
         button.addEventListener("click", function () {
           currentGenre = this.dataset.genre;
-          document.getElementById("chatTitle").textContent = currentGenre + " のチャット";
-          document.getElementById("genreListPage").classList.add("hidden");
-          document.getElementById("controlebar").classList.add("hidden");
-          document.getElementById("chatPage").classList.remove("hidden");
-          loadMessages();
+          modalTitle.textContent = currentGenre;
+          modalDesc.textContent = this.dataset.desc;
+          modal.classList.remove("hidden");
         });
       });
+
+      // 「チャットに参加する」→ チャット画面へ遷移
+      document.getElementById("modalSubmitButton").addEventListener("click", function () {
+        modal.classList.add("hidden");
+        document.getElementById("chatTitle").textContent = currentGenre + " のチャット";
+        document.getElementById("genreListPage").classList.add("hidden");
+        document.getElementById("controlebar").classList.add("hidden");
+        document.getElementById("chatPage").classList.remove("hidden");
+        loadMessages();
+      });
+
+      // ポップアップを閉じる（「閉じる」ボタン or 背景タップ）
+      function closeModal() {
+        modal.classList.add("hidden");
+      }
+      document.getElementById("modalCloseButton").addEventListener("click", closeModal);
+      document.getElementById("modalOverlay").addEventListener("click", closeModal);
 
       // ジャンル一覧に戻る
       document.getElementById("backButton").addEventListener("click", function () {
@@ -225,6 +258,7 @@ require_once __DIR__ . '/auth_check.php';
           return;
         }
         document.getElementById("message").value = "";
+        clearAttachment();// 送信が成功したら添付プレビューも消す
         await loadMessages();
       });
 
@@ -233,11 +267,30 @@ require_once __DIR__ . '/auth_check.php';
         document.getElementById("fileInput").click();
       });
 
+      // 選択したファイル名をバッジ表示（ファイル名はtextContentで挿入しXSSを防ぐ）
       document.getElementById("fileInput").addEventListener("change", function (event) {
-        if (event.target.files.length > 0) {
-          alert("添付ファイル: " + event.target.files[0].name);
-        }
+        if (event.target.files.length === 0) return;
+        var preview = document.getElementById("attachmentPreview");
+        preview.replaceChildren();
+        var label = document.createElement("span");
+        var icon = document.createElement("i");
+        icon.className = "fa-solid fa-paperclip";
+        label.append(icon, " " + event.target.files[0].name);
+        var remove = document.createElement("span");
+        remove.className = "remove-file";
+        remove.textContent = "✕";
+        remove.addEventListener("click", clearAttachment);
+        preview.append(label, remove);
+        preview.classList.remove("hidden");
       });
+
+      // 添付ファイルをキャンセルする
+      function clearAttachment() {
+        document.getElementById("fileInput").value = "";
+        var preview = document.getElementById("attachmentPreview");
+        preview.replaceChildren();
+        preview.classList.add("hidden");
+      }
 
       // 入力欄の拡大トグル
       document.getElementById("panelToggle").addEventListener("click", function (e) {

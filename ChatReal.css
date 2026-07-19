@@ -292,6 +292,31 @@ body {
   display: none !important;
 }
 
+/* 添付ファイルのプレビューバッジ（選択中のファイル名 + ✕で取り消し） */
+.attachment-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+  padding: 0.4rem 0.9rem;
+  background: var(--chat-action-soft-1);
+  border: 1px solid var(--chat-action-soft-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.attachment-preview .remove-file {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--chat-action);
+  padding: 0 0.2rem;
+}
+
+.attachment-preview .remove-file:hover {
+  color: var(--chat-action-strong);
+}
+
 /* -------- チャット画面 --------
    心理学的デザイン:
    - アクションカラーは「行動・エネルギー・注目」を促すオレンジ(#FF6B35)
