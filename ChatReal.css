@@ -203,7 +203,7 @@ body {
 
 .genreButton span {
   line-height: 1.4;
-
+}
 
 /* -------- チャット画面 --------
    心理学的デザイン:
@@ -468,5 +468,4 @@ body {
   .chat-textarea {
     min-height: 80px;
   }
-}
 }
