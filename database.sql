@@ -60,6 +60,15 @@ CREATE TABLE IF NOT EXISTS ai_training (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- IPアドレス単位の汎用レート制限イベント（未認証APIや登録試行の乱用対策）
+CREATE TABLE IF NOT EXISTS rate_events (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    action VARCHAR(40) NOT NULL,
+    ip_address VARCHAR(45) NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_action_ip_time (action, ip_address, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- ============================================================
 -- 地図トレンド機能
 -- ============================================================

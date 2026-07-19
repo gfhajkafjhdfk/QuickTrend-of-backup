@@ -4,6 +4,7 @@
 // - ユーザーIDは一切使わない（未ログインでも動作する）
 // - GPS座標そのものは保存せず、既知スポット(places)への「訪問」としてのみ記録する
 require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/../rate_limit.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_out(['error' => 'method_not_allowed'], 405);
@@ -11,6 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 if (!csrf_verify()) {
     json_out(['error' => 'invalid_request'], 403);
 }
+// IP単位のレート制限: 訪問記録は5分滞在ごとの想定なので1分30回で十分な余裕
+if (rate_limited($pdo, 'visit', 30, 60)) {
+    json_out(['error' => 'rate_limited'], 429);
+}
+rate_record($pdo, 'visit');
 $input = json_decode(file_get_contents('php://input'), true);
 if (!is_array($input)) {
     json_out(['error' => 'invalid_payload'], 400);

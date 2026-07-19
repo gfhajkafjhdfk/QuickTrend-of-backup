@@ -42,9 +42,10 @@
         var messages = {
             signup_failed: '入力内容に不備があります。もう一度入力してください。',
             weak_password: 'パスワードは8文字以上で、英字と数字を両方含めてください。',
-            email_taken: 'このメールアドレスは既に登録されています。',
+            // メール/ニックネームの重複は、どちらが埋まっているか明かさない汎用文言に統一（ユーザー列挙対策）
+            signup_unavailable: 'この内容では登録できません。メールアドレスまたはニックネームを変更してお試しください。',
             invalid_name: 'ニックネームは2〜50文字で入力してください。',
-            name_taken: 'このニックネームは既に使われています。',
+            too_many_attempts: '登録の試行が続いたため、一時的に制限されています。しばらく待ってからお試しください。',
             invalid_request: '不正なリクエストです。もう一度入力してください。'
         };
         var msg = new URLSearchParams(location.search).get('msg');

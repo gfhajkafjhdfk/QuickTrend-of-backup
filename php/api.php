@@ -4,10 +4,15 @@
 // GET  (それ以外)       : GeoJSON FeatureCollection（Map.htmlのグラフ表示用）
 // POST {name, lat, lng} : 投票を記録
 require_once __DIR__ . '/map/common.php';
+require_once __DIR__ . '/rate_limit.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrf_verify()) {
         json_out(['error' => 'invalid_request'], 403);
+    }
+    // IP単位のレート制限: 投票は1分20回まで（Cookieを捨てても回避できないようにする）
+    if (rate_limited($pdo, 'vote', 20, 60)) {
+        json_out(['error' => 'rate_limited'], 429);
     }
     $input = json_decode(file_get_contents('php://input'), true);
     $name = trim((string) ($input['name'] ?? ''));
@@ -23,6 +28,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         json_out(['error' => 'rate_limited'], 429);
     }
     $_SESSION[$throttleKey] = time();
+    rate_record($pdo, 'vote');
+
+    // 新規スポット作成はより厳しく制限する（偽スポットの量産＝DBスパム対策）
+    $exists = $pdo->prepare('SELECT 1 FROM places WHERE name = :name AND lat_r = :lat_r AND lng_r = :lng_r LIMIT 1');
+    $exists->execute(['name' => $name, 'lat_r' => round($lat, 4), 'lng_r' => round($lng, 4)]);
+    if (!$exists->fetchColumn()) {
+        if (rate_limited($pdo, 'place_create', 5, 3600)) {
+            json_out(['error' => 'rate_limited'], 429);
+        }
+        rate_record($pdo, 'place_create');
+    }
 
     $placeId = find_or_create_place($pdo, $name, (float) $lat, (float) $lng);
     $pdo->prepare('UPDATE places SET vote_count = vote_count + 1 WHERE id = :id')->execute(['id' => $placeId]);
