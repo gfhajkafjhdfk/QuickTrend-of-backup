@@ -1,0 +1,57 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main # mainブランチにpushされたら自動デプロイ
+  workflow_dispatch: # Actionsタブから手動実行も可能にする
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H 160.251.143.121 >> ~/.ssh/known_hosts
+
+      # 本番に必要なファイルだけを転送する。
+      # 開発用ファイル（DBスキーマ・設計メモ・未ビルドNext.js等）はWebルートに置かない。
+      # --delete: リポジトリから消えたファイルはサーバーからも消す
+      #（excludeしたものは削除対象にならないため config.local.php は保持される）
+      - name: Deploy (rsync)
+        run: |
+          rsync -az --delete \
+            --exclude '.git*' \
+            --exclude 'note/' \
+            --exclude 'system.blueprint/' \
+            --exclude 'ai-matching-app/' \
+            --exclude 'README.md' \
+            --exclude 'test.txt' \
+            --exclude 'database.sql' \
+            --exclude 'database.seed.dev.sql' \
+            --exclude '.htaccess' \
+            --exclude 'ChatReal.html' \
+            --exclude 'php/config.local.php' \
+            -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
+            ./ root@160.251.143.121:/var/www/quicktrend/
+
+      # 所有権・権限を本番ポリシー（root管理・www-dataは読み取りのみ）に揃え、
+      # PHP構文チェックで壊れたデプロイを検知する
+      - name: Fix permissions & verify
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes root@160.251.143.121 '
+            set -e
+            chown -R root:www-data /var/www/quicktrend
+            find /var/www/quicktrend -type d -exec chmod 750 {} +
+            find /var/www/quicktrend -type f -exec chmod 640 {} +
+            find /var/www/quicktrend -name "*.php" -print0 | xargs -0 -n1 php -l > /dev/null
+            curl -s -o /dev/null -w "トップページ: HTTP %{http_code}\n" http://localhost/
+            echo "✅ デプロイ完了！"
+          '
