@@ -203,6 +203,7 @@ body {
 
 .genreButton span {
   line-height: 1.4;
+}
 
 .modal {
   position: fixed;
@@ -554,5 +555,4 @@ body {
   .chat-textarea {
     min-height: 80px;
   }
-}
 }
