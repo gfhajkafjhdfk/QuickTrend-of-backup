@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # 転送より前に静的検証する。壊れていればここでジョブが止まり、本番は無傷のまま残る
       - name: Validate (pre-deploy)
