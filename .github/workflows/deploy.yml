@@ -16,6 +16,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    # デプロイ先はSecretsで受け取る（ソースにIP/ユーザーを直書きしない）。
+    #   DEPLOY_HOST … 本番サーバーのホスト名またはIP
+    #   DEPLOY_USER … SSHログインユーザー（例: root）
+    # Settings > Secrets and variables > Actions で登録すること。
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      DEPLOY_PATH: /var/www/quicktrend
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,6 +41,10 @@ jobs:
         run: |
           if [ -z "$DEPLOY_KEY" ]; then
             echo "::error::DEPLOY_KEY secretが未登録です。リポジトリのSettings > Secrets and variables > Actions で登録してください"
+            exit 1
+          fi
+          if [ -z "$DEPLOY_HOST" ] || [ -z "$DEPLOY_USER" ]; then
+            echo "::error::DEPLOY_HOST / DEPLOY_USER secretが未登録です。Settings > Secrets and variables > Actions で登録してください"
             exit 1
           fi
           mkdir -p ~/.ssh
@@ -57,7 +70,7 @@ jobs:
           # known_hosts取得（一時的なネットワーク不調に備えて3回までリトライ）
           # ssh-keyscanは到達不可でも終了コード0を返し得るため、出力が空でないことで成否を判定する
           for i in 1 2 3; do
-            if ssh-keyscan -T 15 160.251.143.121 > /tmp/ks_out 2>/dev/null && [ -s /tmp/ks_out ]; then
+            if ssh-keyscan -T 15 "$DEPLOY_HOST" > /tmp/ks_out 2>/dev/null && [ -s /tmp/ks_out ]; then
               cat /tmp/ks_out >> ~/.ssh/known_hosts
               echo "known_hosts取得: OK ($(wc -l < /tmp/ks_out)件)"
               break
@@ -85,13 +98,13 @@ jobs:
             --exclude 'ChatReal.html' \
             --exclude 'php/config.local.php' \
             -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
-            ./ root@160.251.143.121:/var/www/quicktrend/
+            ./ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
 
       # 所有権・権限を本番ポリシー（root管理・www-dataは読み取りのみ）に揃える。
       # 構文検証は転送前のValidateステップで実施済みだが、念のためサーバー側でも最終確認する
       - name: Fix permissions & verify
         run: |
-          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes root@160.251.143.121 '
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes "${DEPLOY_USER}@${DEPLOY_HOST}" '
             set -e
             chown -R root:www-data /var/www/quicktrend
             find /var/www/quicktrend -type d -exec chmod 750 {} +
