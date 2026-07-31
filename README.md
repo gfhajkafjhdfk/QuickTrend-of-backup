@@ -24,7 +24,6 @@ QuickTrend is my attempt to make local communication more accessible by combinin
 
 ### Frontend
 
-* Vue.js
 * JavaScript
 * HTML / CSS
 
