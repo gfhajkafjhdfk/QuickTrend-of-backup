@@ -58,17 +58,24 @@
     <button onclick="setView('3d')" aria-label="3D表示に切り替え">3D</button>
   </div>
 
+  <!-- Mapboxトークンは js/config.local.js（git管理外・config.local.php と同じ運用）で
+       window.MAPBOX_TOKEN として定義する。雛形: js/config.example.js -->
+  <script src="js/config.local.js"></script>
   <script>
     /* ============================================================
        セキュリティ設定
        ============================================================
        【Mapboxアクセストークン】
-       - フロントエンドに直書きしていますが、Mapboxのドメイン制限
-         を必ず設定してください（https://account.mapbox.com）
-       - 本番環境ではトークンを環境変数またはサーバ側から配信を推奨
-       - 定期的なトークン更新を実装してください
+       - トークンはリポジトリに直書きしない。js/config.local.js から
+         window.MAPBOX_TOKEN で読み込む（このファイルは .gitignore 済み）
+       - 公開トークン(pk.)はブラウザから見えるため、Mapboxダッシュボードで
+         必ずURL(ドメイン)制限を設定すること（https://account.mapbox.com）
+       - トークンを更新(rotate)したら config.local.js を差し替えるだけでよい
     */
-    mapboxgl.accessToken = 'pk.eyJ1Ijoid3BwZXIiLCJhIjoiY21qM3RtYXZqMTljYzNkcTByOWdkeDk3ciJ9.xNRmm0JxvqZj3XFtLzLObw'; 
+    mapboxgl.accessToken = (window.MAPBOX_TOKEN || '').trim();
+    if (!mapboxgl.accessToken) {
+      console.error('[QuickTrend] Mapboxトークン未設定: js/config.local.js に window.MAPBOX_TOKEN を設定してください');
+    }
 
     /* ============================================================
        アプリケーション設定

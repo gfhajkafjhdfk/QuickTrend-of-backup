@@ -97,6 +97,8 @@ jobs:
             --exclude '.htaccess' \
             --exclude 'ChatReal.html' \
             --exclude 'php/config.local.php' \
+            --exclude 'js/config.local.js' \
+            --exclude 'js/config.example.js' \
             -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
             ./ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
 
