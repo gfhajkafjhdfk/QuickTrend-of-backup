@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Questions & ideas (Discussions)
+    url: https://github.com/gfhajkafjhdfk/QuickTrend-of-backup/discussions
+    about: Ask a question or discuss an idea before opening an issue.
+  - name: 🔐 Report a security vulnerability
+    url: https://github.com/gfhajkafjhdfk/QuickTrend-of-backup/security/policy
+    about: Please report security issues privately — do not open a public issue.
+  - name: 🌐 Live demo
+    url: https://gfhajkafjhdfk.github.io/QuickTrend-of-backup/
+    about: Try QuickTrend before filing an issue.

@@ -1,0 +1,19 @@
+version: 2
+updates:
+  # GitHub Actions used in workflows (deploy.yml, codeql.yml, ...)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "ci"
+
+  # Node dependencies of the AI matching app
+  - package-ecosystem: "npm"
+    directory: "/ai-matching-app"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"

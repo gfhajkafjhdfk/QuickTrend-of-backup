@@ -1,69 +1,115 @@
+<div align="center">
+
 # QuickTrend
 
-> A location-based platform for sharing and discovering local, real-time information.
+**A location-based social platform where your city becomes the feed.**
 
-QuickTrend is an open-source web application that enables users to share and discover local information on an interactive map in real time. The project aims to make community information easier to access and encourage local engagement through location-based posts.
+Share and discover local, real-time information on an interactive map — vote on places, see what is trending near you, and chat in topic-based rooms.
 
-## Why I Built This
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Good First Issues](https://img.shields.io/github/issues/gfhajkafjhdfk/QuickTrend-of-backup/good%20first%20issue?color=7057ff&label=good%20first%20issues)](https://github.com/gfhajkafjhdfk/QuickTrend-of-backup/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+[![Made in Japan](https://img.shields.io/badge/made%20in-Japan-bc002d.svg)](#about)
 
-I started this project because I wanted to solve a simple problem:
+[**Live Demo**](https://gfhajkafjhdfk.github.io/QuickTrend-of-backup/) · [Report a Bug](../../issues/new?template=bug_report.yml) · [Request a Feature](../../issues/new?template=feature_request.yml) · [Contributing](CONTRIBUTING.md)
 
-**"There is a lot of local information, but much of it never reaches the people who need it."**
+<img src="docs/screenshot-map.jpg" alt="QuickTrend interactive map — spots glow by popularity" width="720">
 
-QuickTrend is my attempt to make local communication more accessible by combining maps, web technologies, and real-time information sharing.
+</div>
+
+---
+
+## Why QuickTrend?
+
+> **"There is a lot of local information, but much of it never reaches the people who need it."**
+
+Most social apps flatten *where* things happen. QuickTrend is built the other way around: the **map is the timeline**. Spots light up as people vote and post, so a neighbourhood's real-time mood becomes something you can *see*. The goal is to make local communication more accessible and to help solve the shortage of community connection in a place.
 
 ## Features
 
-* 📍 Location-based posts
-* 🗺 Interactive map interface
-* ⚡ Real-time information sharing
-* 💬 Community-driven local updates
-* 📱 Responsive web design
+- 📍 **Map-first feed** — posts and popularity are visualised directly on an interactive map
+- 🗳 **Vote on places** — tap a spot to vote; the map re-renders the collective answer
+- 💬 **Topic-based chat rooms** — genre-separated rooms (e.g. events, food, local life)
+- ⚡ **Real-time updates** — see local activity as it happens
+- 🌗 **Day / night & 2D / 3D map modes**
+- 🔐 **Security-conscious** — hashed passwords, CSRF protection, rate limiting, user-enumeration hardening
+
+## Screenshots
+
+| Interactive map | Topic rooms |
+| :--: | :--: |
+| <img src="docs/screenshot-map.jpg" width="380"> | <img src="docs/screenshot-genres.jpg" width="380"> |
 
 ## Tech Stack
 
-### Frontend
+| Layer | Technology |
+| --- | --- |
+| Frontend | HTML / CSS / JavaScript, [Mapbox GL JS](https://www.mapbox.com/), [Turf.js](https://turfjs.org/) |
+| Backend | PHP 8.3 (FPM) |
+| Database | MySQL 8.0 |
+| Web server | Nginx |
+| Infra / CI | Linux VPS, GitHub Actions (rsync deploy over SSH) |
 
-* JavaScript
-* HTML / CSS
+## Getting Started (Local Development)
 
-### Backend
+> Requires **PHP 8.1+**, **MySQL 8.0+**, and a web server (PHP's built-in server is fine for a quick look).
 
-* PHP
-* MySQL
-* Nginx
+```bash
+# 1. Clone
+git clone https://github.com/gfhajkafjhdfk/QuickTrend-of-backup.git
+cd QuickTrend-of-backup
 
-### Infrastructure
+# 2. Create the database (schema only — no data is shipped)
+mysql -u root -p < database.sql
+# optional: load a dev test user
+mysql -u root -p quicktrend < database.seed.dev.sql
 
-* GitHub Actions
-* Linux VPS
-* SSH Deployment
+# 3. Backend config (never committed — see .gitignore)
+cp php/config.local.php.example php/config.local.php   # then edit DB credentials
+#   (or set the QT_DB_* environment variables instead)
+
+# 4. Frontend config: set your own Mapbox token
+cp js/config.example.js js/config.local.js             # then paste a domain-restricted pk. token
+
+# 5. Run
+php -S localhost:8000                                  # then open http://localhost:8000
+```
+
+> 🔑 **Mapbox token:** use your own **publishable (`pk.`) token** and restrict it to your domain in the [Mapbox dashboard](https://account.mapbox.com/). Never commit it — `js/config.local.js` is git-ignored.
+
+## Project Structure
+
+```
+├── index.html            # Landing
+├── Map.html              # Interactive map (Mapbox GL)
+├── QuickTrend.html       # Main app shell
+├── php/                  # Auth, API, chat, matching (server-side)
+├── js/                   # Frontend logic (js/map/* = map modules)
+├── database.sql          # Schema (no real data)
+├── .github/workflows/    # CI/CD (deploy, CodeQL)
+└── docs/                 # Screenshots & docs
+```
 
 ## Roadmap
 
-* [ ] Improve UI/UX
-* [ ] Mobile optimization
-* [ ] Enhanced search
-* [ ] AI-assisted information analysis
-* [ ] Community moderation features
+- [ ] Improve UI/UX and mobile optimisation
+- [ ] Enhanced search & filtering
+- [ ] AI-assisted local information analysis
+- [ ] Community moderation features
+- [ ] English UI / i18n
+
+See the [open issues](../../issues) and the [`good first issue`](../../issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) label for ways to help.
 
 ## Contributing
 
-Contributions are welcome!
+Contributions of every size are welcome — from typo fixes to new features. Start with **[CONTRIBUTING.md](CONTRIBUTING.md)** and look for the [`good first issue`](../../issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) label. Please also read our [Code of Conduct](CODE_OF_CONDUCT.md).
 
-If you find a bug or have ideas for new features, feel free to open an Issue or submit a Pull Request.
+Found a security issue? Please **do not** open a public issue — see [SECURITY.md](SECURITY.md).
 
-Even small improvements are greatly appreciated.
+## About
 
-## About Me
-
-Hi! I'm a Japanese high school senior passionate about software development, AI, and data science.
-
-I created QuickTrend as a long-term personal project to learn full-stack development while building something that can have a real social impact.
-
-I'm continuously improving both the project and my own skills, so feedback, suggestions, and contributions are always welcome.
+Built by a Japanese high-school student as a long-term project to learn full-stack development while making something with real social impact. Feedback, suggestions, and pull requests are genuinely appreciated.
 
 ## License
 
-This project is released under the MIT License.
-
+Released under the [MIT License](LICENSE).
